@@ -3,6 +3,8 @@
 All numbers: camera-measured ratio of a damaged column to its local healthy neighbours (1.00 = equal measured luminance), core
 columns 1256-1259 of a 77-inch S95F; edge columns 1255/1260 were nearly healthy (0.94-0.97) before correction.
 
+[Original photos, the recovered Sony setup preview and the measured HDR chart](../PHOTO-GALLERY.md) are published separately. No final matched before/after photo or distant after-shot was recovered; the after ratios below come from the saved Sony measurement data.
+
 ## Uncorrected
 
 | level | per column R/G/B (1256 / 1257 / 1258 / 1259) |

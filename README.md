@@ -1,68 +1,73 @@
 # Samsung S95F Display Lab
 
-**Inside a damaged QD-OLED: controller-memory blackout mitigation, TV graphics correction, calibrated SDR/HDR shaders, and the firmware research behind future panel calibration.**
+**Rooted TV research · blackout mitigation · visible-line correction · SDR/HDR calibration**
 
-This project began with a physically damaged **77-inch Samsung S95F**: a dim vertical line and recurring panel blackouts. It grew into an investigation across the TV's root-access chain, display compositor, controller RAM, sensing logic and calibration storage—and a working correction system on a **Ugoos AM9 Pro running CoreELEC/Kodi with Arctic Fuse 3**.
+We obtained **root access to a Samsung S95F TV (UID/EUID 0)** and used it to work with kernel driver interfaces, display registers, controller memory and the graphics compositor. On a physically damaged **77-inch QD-OLED**, that enabled a working blackout mitigation and TV-side line correction. We then built a sharper **native-4K Kodi correction** on a **Ugoos AM9 Pro / CoreELEC / Arctic Fuse 3**.
 
-We traced how faults reach the panel-stop path, deployed a bounded RAM mask that resolved the owner's recurring blackouts, made a TV-side overlay affect HDMI, measured a paired graphics/gain correction, and built a sharper native-4K player correction for SDR and HDR. We also traced real compensation-storage writes and found why several apparent success and rollback signals cannot be trusted.
+**[Start here](docs/START-HERE.md)** · [Root access](docs/advanced/ROOT-ACCESS.md) · [TV graphics fix](docs/advanced/TV-LINE-CORRECTION.md) · [Kodi install](docs/kodi/README.md) · [Blackout fix](docs/advanced/BLACKOUT-MITIGATION.md) · [Panel research](docs/advanced/panel/README.md)
 
-**[Start here →](docs/START-HERE.md)** · [TV research handbook](docs/advanced/README.md) · [Kodi installation](docs/kodi/README.md) · [Mobile Demura / panel dossier](docs/advanced/panel/README.md)
+## What we fixed
 
-## What we achieved
+The damaged columns **1255–1260** were too dim, particularly in dark scenes; the panel also repeatedly went black while audio continued. These needed separate solutions.
 
-| Result | What actually happened | Evidence / guide |
+| Working result | How it works | Coverage |
 | --- | --- | --- |
-| **Recurring blackout mitigation** | Set skip flags for controller lanes 540–661 through guarded RAM writes; a source-aware watcher re-verifies and reapplies the mask after controller resets | Owner-confirmed outcome; [fault, bypass and recovery](docs/advanced/BLACKOUT-MITIGATION.md) |
-| **TV-side graphics correction** | Root-run EFL overlay, HWC/compositor changes and paired MGA RGB gain affected the tested HDMI image; measured background preservation at grey 51 was 1.000 ± 0.2% | Camera-measured; [graphics and gain research](docs/advanced/GRAPHICS-AND-GPU.md) |
-| **Native-4K Kodi correction** | Per-column/per-colour strips, Arctic skin integration, separate chroma profiles and a raw-PQ HDR GUI-composite shader | Working code and camera results; [installation and results](docs/kodi/README.md) |
-| **Root-access compatibility work** | The SDK archive-root path worked on the retained S95F setup; the actual runtime-discovery delta is published | Target-observed; [root chain and patch](docs/advanced/ROOT-ACCESS.md) |
-| **Controller and firmware reconstruction** | USB protocol, RAM aliases, sensing-table writers, fault producers, compensation save/load descriptors and hardware-LUT transfer paths | Static traces and host models; [controller](docs/advanced/CONTROLLER-COMMUNICATIONS.md) / [firmware](docs/advanced/panel/FIRMWARE-AND-COMPENSATION.md) |
-| **Mobile Demura / panel-flashing research** | Identified the TV service app and TCON flash chain; later source models exposed false-success and both-slot-overwrite cases in stock storage routines | Research only; [consolidated dossier](docs/advanced/panel/README.md) |
+| **Stop the recurring panel blackouts** | Guarded controller-RAM writes set skip flags for lanes 540–661. A server watcher verifies the mask and handles bounded recovery after controller resets. | Owner-confirmed on the damaged S95F; suppresses that part of a sensing-consistency check |
+| **Reduce the visible line inside the TV** | An EFL graphics overlay dims the surrounding picture; paired MGA RGB gain restores the background while the damaged strip receives a relative lift. | Camera-measured on the tested TV path; 1080p graphics scaling spreads correction into neighbours |
+| **Correct the line more precisely through Kodi** | A native-4K strip adjusts individual columns and colours. The patched HDR shader applies the correction in raw PQ. | Tested SDR/HDR10/HDR10+ Kodi path; avoids the TV overlay's 2× scaling blur |
 
-The distinction matters: the blackout fix writes **controller RAM**; the TV line correction uses **graphics composition plus display gain**; the Kodi HDR correction modifies a **player shader**. A direct TV GPU-memory/video-injection loop has not been demonstrated. This is substantial reverse engineering of selected display paths, rather than a claim to have decoded the entire television.
+These techniques compensate the **image and fault behavior**; the physical panel damage remains.
 
-## See the correction results
+## The line, photographed
 
-These are measured damaged-column / neighbouring-column luminance ratios on the original set. **1.00 means equal measured luminance**, not a guarantee that every artifact is invisible.
+| Phone reference — dark grey | Phone close-up — individual subpixels |
+| :---: | :---: |
+| <img src="docs/assets/line-before-phone-grey10.jpg" width="310" alt="Original damaged vertical line in a Galaxy phone photo at SDR grey 10"> | <img src="docs/assets/line-before-phone-pixels-grey50.jpg" width="310" alt="Galaxy phone close-up showing dim RGB subpixels at SDR grey 50"> |
+| SDR grey 10; the dark line is prominent. | SDR grey 50; the RGB grid shows the affected columns. |
 
-| Test | Before | After |
+These are **original defect/reference photos**, not a matched before/after pair. The later **Sony a7 IV** sessions supplied the calibrated measurements below. We recovered a Sony setup preview, but no confirmed final after-photo or distant after-shot. [Photo gallery, sources and capture limits →](docs/PHOTO-GALLERY.md)
+
+## How well does the line correction work?
+
+At a **2-nit HDR target**, the original line measured about **0.02×** its healthy neighbours. Correction brought it close to their brightness. Near black and bright highlights remain harder to match.
+
+| HDR target | Final Kodi HDR v2 ratio to healthy neighbours | Practical result |
 | --- | --- | --- |
-| SDR grey 51/255, core columns | About 0.12–0.45 across RGB | 0.98–1.09 |
-| HDR10 2-nit target, core columns | About 0.02 | 0.92–1.18 |
-| HDR10 0.5-nit target | Severe near-black loss | 0.53–0.86; correction remains limited |
+| **0.5 nits — near black** | **0.53–0.86×** | Still visibly dimmer; incomplete correction |
+| **2 nits — dark detail** | **1.01–1.18×** | Close match, with some overcorrection |
+| **5 nits** | **1.06–1.26×** | Some columns remain too bright |
+| **15 nits** | **0.95–1.08×** | Closest measured match in this final profile |
+| **100 nits — brighter test** | **0.81–0.92×** | A residual dim line remains |
+| **Brighter highlights (>100 nits)** | No final measured range published | The affine fit can under-correct above ~300 nits; full-field ABL also affects output |
 
-The SDR result used a coupled dimming/TV-gain configuration. The default Kodi installer uses a different B=0 variant that was not separately camera-verified in SDR. HDR figures refer to the tested player path; TV-overlay performance is limited by a 1080p canvas scaled to 4K. See [all measurements and limits](docs/kodi/RESULTS-AND-LIMITS.md) before reusing the numbers.
+**SDR:** measured ratios were **0.96–1.19× at grey 13** and **0.98–1.09× at grey 51**, using paired dimming/TV gain. The default B=0 Kodi SDR variant was not separately camera-verified. SDR code levels are not nit values. **1.00× means equal measured luminance**, not guaranteed invisibility. [Full results](docs/kodi/RESULTS-AND-LIMITS.md) · [Measurement chart](docs/assets/hdr-result-ranges.png)
 
-## Choose a path
+## Root, kernel, memory and graphics access
 
-- **Reproduce the player correction:** follow the [Kodi guide](docs/kodi/README.md). It covers finding columns, installing the layer/relay/shader, RAW-camera calibration, profiles and removal. Ordinary installation needs no TV root.
-- **Understand or continue the TV work:** read [the research handbook](docs/advanced/README.md), starting with the blackout and graphics chapters. The TV tools are model- and firmware-specific research, with an experimental EFL client and the root compatibility patch published separately.
-- **Prepare for native panel calibration:** read [Mobile Demura and panel flashing](docs/advanced/panel/README.md), then the [future research plan](docs/advanced/panel/FUTURE-PANEL-CALIBRATION.md). Exact known formats, failed assumptions and missing evidence are preserved. No qualified calibration writer or restore procedure exists yet.
-
-## Project map
-
-| Area | Contents |
+| Demonstrated access | What we used it for |
 | --- | --- |
-| [docs/START-HERE.md](docs/START-HERE.md) | Guided reading and workflow choices |
-| [TV research](docs/advanced/README.md) | Root, blackout mitigation, controller communications, graphics, evidence and chronology |
-| [Panel research](docs/advanced/panel/README.md) | Mobile service app, flash chains, compensation storage, backup failures and future work |
-| [Kodi guide](docs/kodi/README.md) | Installation, calibration, SDR/HDR method and operational lessons |
-| [code/](code/) | Configurable installer, skin/strip generator, relay, shader patch, keeper and camera tools |
-| [research/](research/README.md) | Offline format inspectors/tests, experimental TV overlay and archive-root patch |
+| **Root session on the TV** | SDK archive-root with an S95F runtime-discovery patch; authenticated host-assisted reacquisition |
+| **Kernel/display-driver interfaces** | Reviewed `/dev/tztv_tcon` ioctls, FRC debugfs register access and display-state investigation |
+| **External controller RAM** | USB read/write transport, sensing-table analysis and the bounded blackout mask |
+| **TV graphics/display controls** | EFL/Wayland surfaces, HWC/compositor control, MGA RGB gain and Pixel Shift following |
+| **Firmware and calibration-storage analysis** | Save/load paths, exact storage descriptors, Mobile Demura flash chain and false-success/rollback findings |
 
-## Scope and reproducibility
+Root did not remove every SMACK restriction. The working TV correction uses **graphics composition and display gain**; direct GPU-memory video injection and unrestricted kernel-memory control were not demonstrated. Native panel-calibration flashing remains research.
 
-The physical panel remains damaged. The mask reduces diagnostic coverage in one sensing-consistency path; it does not certify electrical safety. Shared compensation RAM can reach persistent storage through stock firmware, and neither a reboot nor an app `ok` is a verified undo/success mechanism. Read [SAFETY.md](SAFETY.md) before device work.
+## Guides — pick your goal
 
-The handbook separates camera measurements, target observations, source facts, host models and hypotheses. Source hashes preserve provenance. Credentials, private device identities, OEM binaries/keys and unique calibration dumps stay outside the repository. The public package provides code where generalized, tested components exist and documents the remaining owner-specific deployment dependencies.
+| I want to… | Guide |
+| --- | --- |
+| **Obtain compatible root access** | [Prerequisites, S95F patch, commands and session lifecycle](docs/advanced/ROOT-ACCESS.md) |
+| **Understand/reproduce the TV graphics line fix** | [Root → overlay → paired gain → calibration → cleanup](docs/advanced/TV-LINE-CORRECTION.md) |
+| **Install the sharper Kodi SDR/HDR line fix** | [Complete installation, Arctic integration, profiles and removal](docs/kodi/README.md) |
+| **Calibrate my own damaged columns** | [RAW-camera setup, reference shots, SDR/chroma/HDR fitting](docs/kodi/CALIBRATION.md) |
+| **Understand the panel blackout/crash bypass** | [Fault evidence, exact skip bits, watcher, recovery and limits](docs/advanced/BLACKOUT-MITIGATION.md) |
+| **Investigate Mobile Demura / future panel flashing** | [App, protocols, firmware, backup failures and remaining gaps](docs/advanced/panel/README.md) |
+| **Build on the reverse engineering** | [Technical handbook and evidence index](docs/advanced/README.md) |
 
-Offline tools can be checked without a TV:
+[**Player implementation**](code/README.md) · [**TV overlay / root patch / offline tools**](research/README.md) · [**Photo provenance**](docs/PHOTO-GALLERY.md) · [**Safety and rollback**](SAFETY.md)
 
-```sh
-python3 -m unittest discover -s research/tests -v
-python3 research/inspect_formats.py layout comp2 0
-```
+The blackout mask reduces diagnostic coverage; compensation RAM can reach persistent storage through stock firmware. No panel-calibration flash or qualified native-calibration restore was attempted. This package keeps private device identities, credentials, OEM binaries/keys and unique calibration dumps outside Git.
 
-## License
-
-MIT ([LICENSE](LICENSE)), except `code/box/shaders/*`, derived from Kodi and licensed GPL-2.0-or-later. Independent owner-device research; not affiliated with Samsung, Kodi or CoreELEC.
+MIT ([LICENSE](LICENSE)), except the Kodi-derived shaders, which remain GPL-2.0-or-later. Independent owner-device research; not affiliated with Samsung, Kodi or CoreELEC.

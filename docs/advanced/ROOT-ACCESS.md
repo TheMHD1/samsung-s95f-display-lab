@@ -1,5 +1,20 @@
 # Root access used during the TV research
 
+The retained S95F deployment had verified **UID 0 and EUID 0**. This access was used for kernel/display-driver interfaces, selected controller-memory operations and graphics/compositor work. It was not merely player-box root.
+
+## What access was demonstrated
+
+| Surface | Demonstrated use / boundary |
+| --- | --- |
+| Authenticated TV root agent | Reviewed commands with UID/EUID checks and host-assisted session reacquisition |
+| `/dev/tztv_tcon` | Matched ARM32 ioctl/recovery work; an interface into the driver, not unrestricted kernel-memory access |
+| FRC debugfs registers | Selected display-register/MGA reads and writes with complete-word readback |
+| External controller SRAM | Source-qualified USB RAM read/write paths and the guarded lane mask |
+| EFL/Wayland and compositor | Owned graphics surfaces, HWC state and measured overlay/gain correction |
+| Kernel log access | Observed Pixel Shift records where accessible, with profile following |
+
+The observed SMACK label remained `User`; root did not erase mandatory-access-control or graphics-ownership boundaries. Kernel-driver access is not proof of arbitrary kernel code execution. Direct GPU-memory/video injection was not established. Continue with the [TV line-correction workflow](TV-LINE-CORRECTION.md), [blackout chapter](BLACKOUT-MITIGATION.md) or [graphics internals](GRAPHICS-AND-GPU.md) for the actual uses.
+
 ## Actual route: SDK archive launcher, not GPU-memory injection
 
 The S95F research used the **archive-root** implementation in [Samsung TV Root](https://github.com/chris-ritsen/samsung-tv-root). The inspected source worktree was based on commit `4ad2c4d3b0d0e0da4b5b7ebe4a787e94596f416b`, with a local runtime-discovery compatibility patch described below. Source locations are `src/samsung_tv_root/archive_root.py`, `payloads/common/SamsungTvArchiveRoot.cs`, and `payloads/common/SamsungTvRootAgent.cs` in that project. The base commit alone is not the complete deployed S95F provenance.

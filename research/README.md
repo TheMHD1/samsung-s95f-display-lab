@@ -8,6 +8,7 @@ Part of [Samsung S95F Display Lab](../README.md). Choose a component:
 | [root-access/](root-access/README.md) | Pinned upstream root tooling and the S95F runtime-discovery patch |
 | [panel/](panel/README.md) | Provenance manifest and links into Mobile Demura / panel-storage research |
 | `formats.py`, `inspect_formats.py`, `tests/` | Offline USB/header/layout/checksum models and tests |
+| `render_hdr_results.py` | Rebuild the published HDR measurement chart from its JSON data (requires matplotlib) |
 
 These small offline tools preserve the useful protocol and storage-format discoveries. They do not bootstrap root, open devices, make network requests, decrypt firmware, dump calibration or write a panel. They inspect **local regular files** and synthetic inputs only.
 

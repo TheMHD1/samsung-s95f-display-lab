@@ -4,9 +4,11 @@
 
 | Your goal | Start with | Then read |
 | --- | --- | --- |
+| Obtain compatible TV root access | [Root guide and reproduction commands](advanced/ROOT-ACCESS.md) | [Published S95F runtime patch](../research/root-access/README.md), [TV workflow](advanced/TV-LINE-CORRECTION.md) |
 | Correct a damaged column line through Kodi | [Kodi installation and calibration](kodi/README.md) | [Layer](kodi/KODI-LAYER.md), [HDR shader](kodi/HDR-SHADER.md), [reliability](kodi/RELIABILITY.md) |
 | Understand the blackout/crash bypass | [Blackout mitigation](advanced/BLACKOUT-MITIGATION.md) | [Controller protocol](advanced/CONTROLLER-COMMUNICATIONS.md), [root access](advanced/ROOT-ACCESS.md) |
-| Understand TV-side graphics/gain correction | [Graphics and GPU](advanced/GRAPHICS-AND-GPU.md) | [Experimental EFL source](../research/tv-overlay/README.md), [results](kodi/RESULTS-AND-LIMITS.md) |
+| Understand TV-side graphics/gain correction | [TV correction workflow](advanced/TV-LINE-CORRECTION.md) | [Graphics internals](advanced/GRAPHICS-AND-GPU.md), [experimental EFL source](../research/tv-overlay/README.md) |
+| See the line and assess the result | [Photo gallery and provenance](PHOTO-GALLERY.md) | [Measured low/high-brightness results](kodi/RESULTS-AND-LIMITS.md) |
 | Continue Mobile Demura or panel flashing | [Consolidated panel dossier](advanced/panel/README.md) | [Firmware/storage](advanced/panel/FIRMWARE-AND-COMPENSATION.md), [future programme](advanced/panel/FUTURE-PANEL-CALIBRATION.md) |
 | Audit the evidence before building on it | [Evidence and chronology](advanced/EVIDENCE-AND-CHRONOLOGY.md) | [Source manifest](../research/panel/sources.json), [offline tools](../research/README.md) |
 

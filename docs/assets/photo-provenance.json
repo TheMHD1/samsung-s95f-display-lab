@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-30",
+  "photos": [
+    {
+      "asset": "line-before-phone-grey10.jpg",
+      "source_sha256": "ebd8dc560c106e536a04f737acba629c4fcfadc75c5104b1266576b8dcff9ac3",
+      "public_sha256": "f897cf11837a871060f7d7a9bcc9b63c760a9112b8c47d99359942cdcdb0f655",
+      "treatment": "Metadata removed; orientation retained where required. Decoded pixels unchanged. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "line-before-phone-pixels-grey50.jpg",
+      "source_sha256": "2c2e6e6c18890d5027a2618e488f53fdf1d9cb49f678a296a90b79519f579cbb",
+      "public_sha256": "046d5c5c103596703caa01cf19f752bc25d7704644718d4eb8dffb8386e7eaef",
+      "treatment": "Metadata removed; orientation retained where required. Decoded pixels unchanged. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "sony-session-setup.jpg",
+      "source_sha256": "4a60e4b3f924d15656fb02b8bf7faf12b6f88b3315d4f62f04139eb935e42c14",
+      "public_sha256": "4a60e4b3f924d15656fb02b8bf7faf12b6f88b3315d4f62f04139eb935e42c14",
+      "treatment": "Metadata removed; orientation retained where required. Decoded pixels unchanged. No crop, retouch, exposure adjustment or generative edit."
+    }
+  ]
+}

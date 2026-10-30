@@ -14,6 +14,8 @@ The ordinary [Kodi installation](../kodi/README.md#quick-guide) needs no TV root
 | [Controller communications](CONTROLLER-COMMUNICATIONS.md) | USB framing, address spaces, RAM/storage modes, lane masking, read freshness and transaction ownership |
 | [Firmware and compensation](panel/FIRMWARE-AND-COMPENSATION.md) | Firmware coordinates, comp2/comp6 storage, persistence, checksums, EXCO/IP-LUT and internal demura |
 | [Graphics and GPU research](GRAPHICS-AND-GPU.md) | EFL/HWC overlay, MGA register interface, captures, ABI findings, Kodi shader, and unproved memory-injection ideas |
+| [TV graphics correction workflow](TV-LINE-CORRECTION.md) | Root/session setup, EFL geometry, paired gain, camera fitting and coupled cleanup; explains the public backend's remaining adaptation needs |
+| [Photos and measurements](../PHOTO-GALLERY.md) | Original phone references, recovered Sony setup preview, measured after data and missing after-photo provenance |
 | [Mobile Demura and panel flashing](panel/README.md) | Consolidated mobile app/flash chain, receiver framing, backup false-success cases, both-slot overwrite and missing phone/format/restore evidence |
 | [Future panel-native dossier](panel/FUTURE-PANEL-CALIBRATION.md) | What is needed to build a real writer, candidate paths, backup/restore requirements, experiments and decision gates |
 | [Evidence and chronology](EVIDENCE-AND-CHRONOLOGY.md) | Evidence levels, experiment sequence, corrected earlier claims and source-report index |

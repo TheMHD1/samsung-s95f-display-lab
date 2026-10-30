@@ -1,0 +1,13 @@
+{
+  "profile": "Final Kodi HDR v2, 0.5-nit-weighted fit",
+  "source": "docs/kodi/RESULTS-AND-LIMITS.md",
+  "quantity": "Reported damaged-core-column to healthy-neighbour luminance ratio; ranges are not confidence intervals",
+  "targets_are_nominal_nits": true,
+  "results": [
+    {"target_nits": 0.5, "low": 0.53, "high": 0.86},
+    {"target_nits": 2, "low": 1.01, "high": 1.18, "uncorrected_approx": 0.02},
+    {"target_nits": 5, "low": 1.06, "high": 1.26},
+    {"target_nits": 15, "low": 0.95, "high": 1.08},
+    {"target_nits": 100, "low": 0.81, "high": 0.92}
+  ]
+}
