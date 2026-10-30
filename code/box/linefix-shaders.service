@@ -1,0 +1,13 @@
+# /storage/.config/system.d/linefix-shaders.service  (CoreELEC user systemd units live here)
+[Unit]
+Description=OLED line fix: Kodi GUI composite shader override (HDR per-column correction)
+Before=kodi.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh /storage/linefix/shader-mount.sh
+ExecStop=-/bin/umount /usr/share/kodi/system/shaders
+
+[Install]
+WantedBy=kodi.service

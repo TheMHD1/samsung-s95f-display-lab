@@ -1,0 +1,42 @@
+{
+ "_note": "Starting point for your own SDR calibration: no global dim (B=0), all strips zero. Copy to code/my-sdr-444.json (and later my-sdr-422.json), set the column keys to your C0..C1, run calib/sdr_round.py 4-6 times.",
+ "B": 0,
+ "strips": {
+  "1255": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "1256": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "1257": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "1258": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "1259": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "1260": [
+   0,
+   0,
+   0,
+   0
+  ]
+ }
+}

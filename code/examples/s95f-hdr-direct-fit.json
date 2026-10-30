@@ -1,0 +1,37 @@
+{
+ "_note": "Direct HDR fit (hdr_fit.py) before refinement: per core column alpha a and PQ lift L (R,G,B), dP = L - a*P, fitted to measured anchors at 2/5/15/100 nits; all anchors within 0.008 PQ.",
+ "fit": {
+  "1256": {
+   "a": 0.2207,
+   "L": [
+    0.1397,
+    0.146,
+    0.1611
+   ]
+  },
+  "1257": {
+   "a": 0.2269,
+   "L": [
+    0.1498,
+    0.1586,
+    0.1854
+   ]
+  },
+  "1258": {
+   "a": 0.2003,
+   "L": [
+    0.1321,
+    0.1418,
+    0.1762
+   ]
+  },
+  "1259": {
+   "a": 0.1752,
+   "L": [
+    0.1112,
+    0.1163,
+    0.1405
+   ]
+  }
+ }
+}

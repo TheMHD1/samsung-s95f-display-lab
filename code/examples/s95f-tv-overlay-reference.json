@@ -1,0 +1,129 @@
+{
+ "_note": "Reference numbers only (no code): the earlier TV-side overlay, a 1920x1080 graphics layer upscaled 2x by the TV. Each graphics pixel p covers panel columns ~2p-1..2p+1, so these are per GRAPHICS pixel [alpha, R, G, B lift], with a full-screen dim 'base' cancelled by a TV-side global gain x trim%. 'odd' = set used when Pixel Shift x is odd. Running it required TV device access, which is out of scope (docs/TV-SIDE-CONCEPTS.md).",
+ "sdr": {
+  "base": 80,
+  "trim_percent": 101.3,
+  "even": {
+   "627": [
+    75,
+    0,
+    0,
+    0
+   ],
+   "628": [
+    60,
+    12,
+    13,
+    16
+   ],
+   "629": [
+    60,
+    15,
+    16,
+    25
+   ],
+   "630": [
+    68,
+    1,
+    2,
+    5
+   ]
+  },
+  "odd": {
+   "627": [
+    80,
+    0,
+    0,
+    0
+   ],
+   "628": [
+    64,
+    10,
+    11,
+    14
+   ],
+   "629": [
+    60,
+    15,
+    16,
+    25
+   ],
+   "630": [
+    64,
+    8,
+    9,
+    14
+   ],
+   "631": [
+    74,
+    1,
+    1,
+    3
+   ]
+  },
+  "result": "grey 13: core 0.7-1.5, 1255 x2.1; grey 51: 0.95-1.28; grey 102: 1.07-1.27 (blur-limited)"
+ },
+ "hdr": {
+  "base": 80,
+  "trim_percent": 101.3,
+  "even": {
+   "627": [
+    82,
+    0,
+    0,
+    0
+   ],
+   "628": [
+    68,
+    10,
+    10,
+    14
+   ],
+   "629": [
+    68,
+    11,
+    11,
+    18
+   ],
+   "630": [
+    72,
+    2,
+    2,
+    5
+   ]
+  },
+  "odd": {
+   "627": [
+    82,
+    0,
+    0,
+    0
+   ],
+   "628": [
+    71,
+    8,
+    8,
+    12
+   ],
+   "629": [
+    68,
+    11,
+    11,
+    18
+   ],
+   "630": [
+    70,
+    6,
+    6,
+    10
+   ],
+   "631": [
+    76,
+    1,
+    1,
+    3
+   ]
+  },
+  "result": "core 0.75-1.22 at 2 nits, 0.93-1.14 at 15, 1.05-1.17 at 100; neighbours up to ~2x at 2 nits"
+ }
+}

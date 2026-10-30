@@ -1,0 +1,68 @@
+{
+  "_comment": "Copy to config.json and edit. Values shown are the ones used on a 77-inch Samsung S95F (QD-OLED) with a dim line at panel columns 1255-1260.",
+
+  "box": {
+    "host": "<BOX_IP>",
+    "user": "root",
+    "ssh_options": ["-o", "BatchMode=yes", "-o", "ConnectTimeout=10"],
+    "linefix_dir": "/storage/linefix"
+  },
+
+  "line": {
+    "panel_width": 3840,
+    "c0": 1255,
+    "c1": 1260,
+    "ref_col": 1257,
+    "report_cols": [1253, 1262],
+    "bg_left": [1217, 1247],
+    "bg_right": [1267, 1297]
+  },
+
+  "skin": {
+    "addon_dir": "/storage/.kodi/addons/skin.arctic.fuse.3",
+    "xml_dir": "1080i",
+    "window_id": 1187
+  },
+
+  "relay": {
+    "port": 8790,
+    "allowed": ["127.0.0.1", "<COMPUTER_IP>"],
+    "pixel_shift_max": 30,
+    "hdr_ok": ["hdr10", "hdr10plus", "hdr10+"],
+    "auto_reboot_after_replug": true
+  },
+
+  "shader": {
+    "col_min": 1200,
+    "col_max": 1320
+  },
+
+  "profiles": {
+    "_comment": "Your own calibrated profiles (start: copy examples/starter-sdr.json; HDR: output of calib/hdr_fit.py). Missing files are skipped.",
+    "444": "my-sdr-444.json",
+    "422": "my-sdr-422.json",
+    "hdr": "my-hdr.json"
+  },
+
+  "camera": {
+    "_comment": "measure.py runs on the computer the camera is tethered to. mode=local runs it here; mode=ssh runs it on <CAMERA_HOST>.",
+    "mode": "local",
+    "ssh_host": "<CAMERA_HOST>",
+    "ssh_user": "<CAMERA_USER>",
+    "python": "python3",
+    "measure_script": "camera/measure.py",
+    "phase_r": 1.96,
+    "phase_b": -1.49,
+    "shutter_sdr": {"8": "8", "13": "4", "20": "2", "26": "1", "32": "6/10", "51": "1/4", "77": "1/10", "102": "1/20"},
+    "shutter_colour": {"red26": "25/10", "green26": "1", "blue26": "2", "red51": "6/10", "green51": "1/4", "blue51": "5/10",
+                       "red102": "1/8", "green102": "1/20", "blue102": "1/10"},
+    "shutter_hdr": {"0p5": "25/10", "2": "6/10", "5": "1/4", "15": "1/10", "50": "1/30", "100": "1/60", "200": "1/125"}
+  },
+
+  "clips": {
+    "box_dir": "/storage/linefix/clips",
+    "window_half_width": 200,
+    "window_rows": [540, 1620],
+    "seconds": 30
+  }
+}

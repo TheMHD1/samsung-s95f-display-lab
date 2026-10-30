@@ -1,0 +1,43 @@
+{
+ "_note": "S95F final HDR10 profile (v2) for the patched GUI composite shader: midpoint of v1 and a refit weighted towards 0.5 nits. Values /255 = raw PQ: out = L + (1 - a) * video. No global dim, no TV-side gain needed. Camera result (R/G core): 0.5 nits 0.53-0.86, 2 nits 1.01-1.18, 5 nits 1.06-1.26, 15 nits 0.95-1.08, 100 nits 0.81-0.92 (uncorrected ~0.02 at 2 nits).",
+ "B": 0,
+ "hdr": true,
+ "strips": {
+  "1255": [
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "1256": [
+   53.5,
+   32.7,
+   35.6,
+   41.8
+  ],
+  "1257": [
+   61.2,
+   38.2,
+   41.4,
+   52.3
+  ],
+  "1258": [
+   54.7,
+   34.0,
+   36.5,
+   49.7
+  ],
+  "1259": [
+   44.0,
+   27.4,
+   28.5,
+   39.2
+  ],
+  "1260": [
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ]
+ }
+}
