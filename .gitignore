@@ -1,0 +1,18 @@
+# Local configuration and credentials
+config.json
+.env
+.env.*
+*.pem
+*.key
+private/
+# Generated runs, builds and private captures
+__pycache__/
+*.py[cod]
+.stage/
+.venv/
+bin/
+obj/
+*.bin
+*.ARW
+*.DNG
+*.raw

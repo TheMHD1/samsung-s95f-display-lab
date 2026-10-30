@@ -1,0 +1,8 @@
+# Disabled, finite-lifetime starter. Example coordinate is not a calibration.
+enabled 0
+alpha 0
+px 628 0 0 0 0
+follow 0
+marker 0
+split 100
+lifetime 60

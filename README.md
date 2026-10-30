@@ -4,8 +4,14 @@ Hide a faint vertical line of damaged columns on an OLED TV by drawing a **pixel
 correction** into the picture before it leaves a Kodi player box, calibrated with a RAW-capable camera.
 
 Developed on a 77-inch Samsung S95F (QD-OLED) whose panel columns **1255-1260** (of 3840) had become dim after
-physical damage, fed by a CoreELEC box (Ugoos AM9 Pro, Amlogic S905X5-J). Nothing on the TV is modified by this
-package. Everything runs on the player box (files under `/storage`, removable) and on your computer.
+physical damage, fed by a CoreELEC box (Ugoos AM9 Pro, Amlogic S905X5-J). The default Kodi installation modifies
+only the player box and runs its controller/calibration tools on your computer; it does not need TV root.
+
+The [advanced research handbook](docs/advanced/README.md) also documents the TV-side work: the actual root-access
+chain, controller communications, firmware/storage findings, successful overlay/gain experiments, GPU research,
+and an organized [future panel-calibration dossier](docs/advanced/FUTURE-PANEL-CALIBRATION.md). It includes static
+addresses and formats and clearly marks what was measured, source-derived or not attempted. Optional experimental
+TV overlay source is separate from the ordinary installer. No panel-calibration writer has been established.
 
 > Not a repair. The damaged subpixels stay damaged; the picture sent to them is pre-distorted so the line blends in.
 > It only works for content played **through Kodi on the box**. Read [SAFETY.md](SAFETY.md) first.
@@ -61,6 +67,8 @@ All commands run from `code/` on your computer. Copy `config.example.json` to `c
 from applications on this system. *Settings > Player > Videos*: adjust display refresh rate = on start/stop, whitelist
 only 2160p modes. Leave colour depth/subsampling on Auto. TV: **Pixel Shift OFF** (see docs/KODI-LAYER.md), picture size
 "fit to screen" (no overscan), sharpness 0, the picture mode you will watch in. `pip install numpy pillow rawpy`.
+Pixel Shift may remain on only with a calibrated, verified follower; the original set later used following successfully.
+Do not reuse an old fixed-column profile after the image shifts.
 
 **1. Find your columns.**
 ```
@@ -108,7 +116,10 @@ restart Kodi. Nothing outside `/storage/linefix`, two unit files and one skin XM
 | [docs/RELIABILITY.md](docs/RELIABILITY.md) | self-heal, enforcement, pitfalls and lessons |
 | [docs/RESULTS-AND-LIMITS.md](docs/RESULTS-AND-LIMITS.md) | all measured numbers, what it cannot do |
 | [docs/IDEAS.md](docs/IDEAS.md) | unexplored directions |
-| [docs/TV-SIDE-CONCEPTS.md](docs/TV-SIDE-CONCEPTS.md) | what was tried inside the TV (concepts only, out of scope) |
+| [docs/TV-SIDE-CONCEPTS.md](docs/TV-SIDE-CONCEPTS.md) | overview of the TV experiments and their evidence boundaries |
+| [docs/advanced/README.md](docs/advanced/README.md) | detailed root, controller, firmware, GPU/compositor research and chronology |
+| [docs/advanced/FUTURE-PANEL-CALIBRATION.md](docs/advanced/FUTURE-PANEL-CALIBRATION.md) | saved future research plan for panel-native correction, including missing format/restore proofs |
+| [research/README.md](research/README.md) | offline protocol/layout/checksum tools and experimental TV EFL overlay source |
 
 ## Layout
 ```
@@ -117,6 +128,8 @@ code/  config.example.json  lfconfig.py  linefix_skin.py  install_box.py  keeper
        calib/   make_clips.py, reference.py, sdr_round.py, sdr_chroma.py, hdr_fit.py, hdr_round.py, verify.py, lfcal.py
        camera/  measure.py (RAW CFA column extraction), camctl.py (ratios vs neighbours)
        examples/ S95F profiles and reference numbers, starter profile
+research/ offline format inspector and synthetic tests; tv-overlay/ experimental EFL client source
+docs/advanced/ root, controller, compensation/firmware, graphics/GPU, future panel work, evidence
 ```
 
 ## License

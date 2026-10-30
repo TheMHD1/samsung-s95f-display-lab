@@ -1,41 +1,47 @@
-# TV-side concepts (high level only)
+# TV-side experiments: overview
 
-Before the Kodi layer existed, the line was corrected **inside the TV**. Those techniques required privileged device
-access to the TV, which is **out of scope for this project**: no access method, commands, register addresses,
-firmware details or code are published here, and none are needed for the Kodi method. This page only records the
-ideas and what they achieved, because they explain some design choices.
+The original release kept TV-side work at a high level. Detailed mechanisms, addresses, firmware findings and future
+research are now preserved in the [advanced handbook](advanced/README.md). The normal Kodi method still requires no
+TV access. This page is a short map of the alternatives.
 
-## 1. Graphics overlay on the TV
-A full-screen layer on the TV's own graphics plane: black with a small alpha everywhere (a uniform dim) and per-pixel
-RGBA strips over the line (premultiplied: colour = lift, alpha = dimming), updated live during calibration.
-Findings:
-- The TV composes graphics at **1920x1080 and upscales 2x in fixed hardware** after mixing, with a blur that cannot be
-  switched to nearest-neighbour. One graphics pixel p covers panel columns 2p, 2p+1 and part of 2p-1; odd panel columns
-  get the average of two graphics pixels. So the lift needed by the damaged columns inevitably leaks half-strength into
-  the neighbours (1255/1261), most visible in dark scenes. A native 4K graphics canvas was not available.
-- The overlay had to be composited in a way that is visible over HDMI inputs, and it moves with the TV's Pixel
-  Shift, so odd/even shift phases needed separate parameter sets.
-- Results (RESULTS-AND-LIMITS.md): good at mid/bright levels, blur-limited near black.
-This limitation is the reason for the native-4K Kodi layer.
+## Working TV overlay, with limits
 
-## 2. Whole-picture gain via a SoC tone-curve stage
-The dim part of the overlay was cancelled by raising the gain of the entire picture by 1/(1 - dim) in a per-level,
-per-channel tone-curve stage of the TV's video processor that sits after graphics mixing. Net effect: background
-unchanged (camera: 1.000 +- 0.2 % at grey 51), the line columns (dimmed less) relatively brighter, i.e. an effective
-gain above 1 on the line. Changes were RAM-only and needed re-applying after standby/reboot. The same stage behaves as
-a gain-vs-level curve after HDR tone mapping. The SDR numbers of the Kodi layer were measured with such a gain
-cancelling a Kodi-side dim of B = 60; this package defaults to B = 0 instead.
+A root-run EFL/Wayland client drew premultiplied RGBA strips and whole-screen black alpha. Disabling compositor HWC
+made the layer visible over the tested HDMI input. The effective TV canvas remained 1920×1080 and was scaled 2×,
+spreading correction into neighbouring panel columns. Later Pixel Shift following worked, but odd phases remained
+blur-limited. This was a real camera-measured mitigation on the retained test chain. Other sources, picture/HDR modes,
+compositor versions and canvas orientation/offsets need their own calibration and acceptance.
 
-## 3. Video-plane dimming boxes (idea, not tested)
-Some TV video pipelines offer a few rectangular alpha boxes on the video plane, pixel-exact at 4K. Combined with a
-whole-picture gain they could give a blur-free per-column GAIN (no offsets) for all sources including TV apps.
+A global MGA tone-curve gain compensated whole-screen dimming away from the line. Camera-measured background ratio
+was 1.000 ± 0.2% at grey 51 under the test conditions. MGA is global, not a per-column register block. Overlay, gain
+and compositor state form a coupled correction and removal procedure. [Graphics details and source](advanced/GRAPHICS-AND-GPU.md)
 
-## 4. Panel compensation (demura / TCON) - researched, deliberately NOT attempted
-OLED panels carry factory per-pixel compensation data applied by the timing controller. Correcting the line there
-would cover every source. It was researched and **deliberately not attempted**: every path found writes persistent
-storage (the compensation data or controller flash), with no trustworthy backup/restore and a real risk of an
-unrecoverable panel. A reboot would not undo a mistake. No instructions are given, and we recommend against it.
+## Native-4K Kodi layer
 
-## 5. What a TV-side solution would still need
-Blur-free 4K overlay or exact video-plane access, a persistent way to re-apply after standby, Pixel Shift following,
-and coverage of TV apps and HDR. None of that is required for the Kodi method, which runs entirely on the player box.
+The better practical correction places the strip in the player's native-4K GUI and applies HDR correction in the
+raw-PQ blend shader. It can align to individual output columns without the TV graphics-plane blur. It covers Kodi
+content, not every TV app/input, and Dolby/VS10 composition changes require a separate calibration.
+
+## Root, controller and firmware work
+
+The S95F used SDK archive-root access, not the separate Mali/GPU exploit. The external controller used a stateful USB
+protocol; a bounded lane mask reduced the damaged set's sensing-consistency blackouts. Neither is a panel calibration.
+The detailed [root chain](advanced/ROOT-ACCESS.md) and [communications](advanced/CONTROLLER-COMMUNICATIONS.md) are documented.
+
+## Panel compensation: researched, not attempted
+
+Firmware analysis found comp2/comp6 working buffers, exact strided storage descriptors, save/load code, checksum
+grammar, hardware-consumer leads and a separate internal SoC demura path. It also disproved a proposed guarantee
+that editing the working RAM would reset harmlessly on reboot: the stock firmware can save those regions.
+
+No reliable coefficient mapping, isolated application point or complete backup/restore method was established. No
+compensation/calibration-storage/flash edit was attempted. This does not prove a future method impossible. The
+[firmware chapter](advanced/FIRMWARE-AND-COMPENSATION.md) and [future dossier](advanced/FUTURE-PANEL-CALIBRATION.md)
+preserve the actual evidence and the work needed before developing a writer.
+
+## GPU and video-plane ideas
+
+Ordinary EFL capture worked for UI, but a sampled HDMI image was black. No full-resolution video capture/reinjection,
+DMA-BUF compositor import or GPU-memory correction injection was demonstrated. Video-plane alpha boxes and a future
+independent post-transform consumer remain research leads. A PC player shader with a nonlinear per-column LUT is an
+alternative when decoded video is directly available. [Experiments and limits](advanced/GRAPHICS-AND-GPU.md)
