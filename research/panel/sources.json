@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "documented_on": "2026-10-30",
+  "scope": "Retained source reports and traces used for the mobile/panel/blackout documentation; hashes identify local evidence, not verified hardware behavior. No raw OEM or owner-specific runtime payload is redistributed.",
+  "sources": [
+    {
+      "local_relative_id": "claude-20261028/deep-dive-20261029/userspace-functions/REPORT.md",
+      "sha256": "85959aa6130971481f4f2419f2c5ec2e4a4f39e1c2e50ef3a09e4d6656841472",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "claude-20261028/deep-dive-20261029/userspace-functions/notes/sdm-il.txt",
+      "sha256": "d9ed52064ff4b8b8cd29a740a2840f622b89d075b4a271d317b270762ad3d062",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "claude-20261028/docs/HANDBOOK.md",
+      "sha256": "e8eb60044ad9f77ad85fbe293569e69fac86e2359f5724a2ccec3377c5a34b09",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "claude-20261028/tools/mask_watcher.py",
+      "sha256": "8399809b9249f648b06edd40604128d727fd32d539e199c09576fbf99e6c84d9",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "panel-idle-20261026/overnight/lane-mask-write-20261028kb/Program.cs",
+      "sha256": "e615d21e2e0ad479bb97a5b389b50f3619bf12732423a238cb7237df6a0bac2e",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "panel-idle-20261026/overnight/rtp-lane-table-writers-20261028ec/README.md",
+      "sha256": "de3cc5136ce1d015fb32087d9db99cf9e1db4d0d73dff7ffb9aa351260922468",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "panel-idle-20261026/overnight/firmware-rtp-producer-20261028df/README.md",
+      "sha256": "a7871a28e46fa0c026c678f7c2b5a31d4671655e45613f2ffe71977a60e2c71b",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "panel-idle-20261026/tcon-research/rt-protect-host-recovery.md",
+      "sha256": "e3237dba799ef333b60f41fce0599bf32e2b8558e5d7d7d89c31ada387125634",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/tcon-path/REPORT.md",
+      "sha256": "4b0d3aa3895dd089ef025cd91fe36be27ca4520fa14f81b6c43bc2754199b898",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/tcon-persistence/REPORT.md",
+      "sha256": "67f0f750d4162ea676c6df8f9aed88e36c0af71a1fdfad57022401cb4c88601f",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/comp-layout/REPORT.md",
+      "sha256": "2c8d5f96ff48bf6a440fd52e4c07790d25f0967e7bdad9670347d9ebf7b83d6a",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/soc-path/REPORT.md",
+      "sha256": "c88b38bc212325c771d27a25e92f55cb1eb36895f1e5aee2d4869d58680e970e",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/receiver-storage/REPORT.md",
+      "sha256": "da7bf9e48947750425ecb581de4d4abe9f9e3ee796eba1e99ce6e7a0e64db568",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/boot-analysis/REPORT.md",
+      "sha256": "805593ffed8d225434ffcc030ace039b2cd9a993515629dc38d679026cbb81e5",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/boot-counterpart/REPORT.md",
+      "sha256": "ed7f9a66567eba8c1057d7fe845bb20ce91297befb88009cb4d5aa70750cc682",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/ip-lut-consumer/REPORT.md",
+      "sha256": "a1ae64eefd25a4c87cc55b7a6a5fbcb6fba116b3296e40d29a3d4604c9c465e7",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/ip-lut-apply/REPORT.md",
+      "sha256": "05835ff40bf13616fb1c68afb0848f733329574cd909908cc69331ac3605e5ca",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/comp-backup-contract/REPORT.md",
+      "sha256": "5a9d7927dabc7b58d59d37344492e404e335065317d0dde18ff6755f8934a9a7",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/comp-backup-contract/persistence-followup/REPORT.md",
+      "sha256": "d72da21affa33fb5da70bf1b40557661b7da035c7eb3b368601f0b3542634689",
+      "redistributed": false
+    },
+    {
+      "local_relative_id": "line-profile-20261029/storage-metadata-reader/post-acquisition-review/REPORT.md",
+      "sha256": "5e4bd0d65f43f8978ffe8259f715bc86c6dbc1c66b9ef649f499021c4614ad10",
+      "redistributed": false
+    }
+  ]
+}

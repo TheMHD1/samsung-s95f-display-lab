@@ -2,6 +2,8 @@
 
 This document is saved for a future attempt. It records how to continue the investigation, including firmware findings that were omitted from the original public package. It is **not** a working panel-programming procedure, and no panel-calibration write was attempted while preparing it.
 
+Read the [Mobile Demura and panel-flashing dossier](README.md) first for the mobile receiver/native chain, later backup failure cases and source manifest. This page gives the ordered programme; it does not establish that Mobile Demura, external comp2/6 and internal SoC demura share a format.
+
 ## Objective and candidate paths
 
 The desired result is an input-dependent, per-column/per-colour correction inside the display, covering HDMI and TV apps with known HDR behaviour, Pixel Shift alignment and a verified removal path. A genuine panel-calibration method must connect:
@@ -42,7 +44,7 @@ Most importantly, prove restoration **before** relying on the backup: transactio
 
 ### 1. Freeze and reproduce the source evidence offline
 
-Preserve the working Kodi correction and an independently recoverable player card. Hash the firmware inputs; identify image0/image1 coordinates and architecture. Reproduce descriptors, save/load lineage, packet parsing and checksum models without the TV. The included [offline research tools](../../research/README.md) cover small format facts; they are not substitutes for reproducing the original-code traces.
+Preserve the working Kodi correction and an independently recoverable player card. Hash the firmware inputs; identify image0/image1 coordinates and architecture. Reproduce descriptors, save/load lineage, packet parsing and checksum models without the TV. The included [offline research tools](../../../research/README.md) cover small format facts; they are not substitutes for reproducing the original-code traces.
 
 Do not rederive comp2 layout from `3*1920*2160`, a 480-wide loop, the two-columns-per-lane observation or a function name. Those shortcuts were specifically not proved.
 

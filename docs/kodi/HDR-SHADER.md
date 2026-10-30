@@ -5,6 +5,7 @@ Files: `code/box/shaders/gles_gui_composite.linefix.patch` (apply to your stock 
 `code/box/linefix-shaders.service`. Derived from Kodi: GPL-2.0-or-later.
 
 ## 1. Why a shader patch
+
 On Amlogic CoreELEC the GUI (OSD plane) and the video plane are separate and blended by the display hardware. In HDR
 output Kodi renders the GUI into an sRGB framebuffer and then runs `GLES/2.0/gles_gui_composite.frag` once more to
 convert it for the OSD plane: sRGB -> linear (LUT) -> BT.709 to BT.2020 -> PQ (LUT with the GUI peak baked in) (or HLG).
@@ -13,6 +14,7 @@ video. So the only place where a per-column correction can be expressed in the P
 it decides the colour and alpha that the hardware blends over the video.
 
 ## 2. Parameter block (no visible pixels)
+
 The HDR strip carries per-column parameters in the top 4 rows of its column, fully opaque, red channel = magic:
 
 | row | R (magic) | G, B |
@@ -27,6 +29,7 @@ Values are `round(v/255 * 65535)` where `v` is the profile number (0..255 scale)
 0.6 code and alpha must be ~1, so ordinary GUI content cannot trigger it by accident.
 
 ## 3. What the patched shader does
+
 For every fragment whose column lies in `[LF_COL_MIN, LF_COL_MAX]` (a window around the line, wide enough for Pixel
 Shift - `install_box.py` writes it from config):
 1. read the 4 parameter pixels of THIS column from the GUI texture (row 0..3; it tries top-down and bottom-up because
@@ -53,6 +56,7 @@ Problems: a **purple line** when opening Kodi's home screen during HDR playback,
 keying. v2 (above) fixed both.
 
 ## 4. Installation and the md5 guard
+
 `install_box.py install`:
 1. reads the box's OWN stock `gles_gui_composite.frag` (even if an override is mounted),
 2. applies `gles_gui_composite.linefix.patch` with `patch`; if it does not apply cleanly, HDR is skipped (SDR still works),
@@ -65,6 +69,7 @@ relay shows no HDR strip (it checks for the `LINEFIX v2` marker in the active sh
 `install_box.py install` to re-patch against the new version.
 
 ## 5. Safety properties
+
 - The system image is never modified; undo = `umount /usr/share/kodi/system/shaders` + restart Kodi, or disable the unit.
 - No shader -> no HDR strip -> no correction, but also no wrong picture.
 - DV / HLG / non-2160p -> no strip.
@@ -74,6 +79,7 @@ relay shows no HDR strip (it checks for the `LINEFIX v2` marker in the active sh
   never glows (METHOD.md section 4).
 
 ## 6. Related knobs found (not needed by the fix)
+
 - Kodi "GUI peak luminance in HDR PQ mode" (default 40 %) - irrelevant for the parameter block (it bypasses the LUT).
 - CoreELEC's OSD SDR->HDR gain table (`oo_y_lut_sdr_hdr` module parameter in the amvecm driver) scales GUI brightness
   in HDR. Do not read or write `/sys/class/amvecm/*` nodes - reading some of them crashed and rebooted our box.

@@ -53,7 +53,7 @@ Kodi's native-4K GUI can address one output column directly. In HDR, the patched
 final = lift + (1-alpha) * (gui*gui_alpha + (1-gui_alpha)*video)
 ```
 
-The existing [HDR shader documentation](../HDR-SHADER.md) and GPL-derived patch describe the implementation. This is deliberate source-controlled shader processing on the player, **not** TV memory injection. HLG is excluded from this shader path. Profile 5 VS10 remapped the GUI and invalidated calibration; other Dolby-processing paths need new tests.
+The existing [HDR shader documentation](../kodi/HDR-SHADER.md) and GPL-derived patch describe the implementation. This is deliberate source-controlled shader processing on the player, **not** TV memory injection. HLG is excluded from this shader path. Profile 5 VS10 remapped the GUI and invalidated calibration; other Dolby-processing paths need new tests.
 
 After a soundbar HDMI reset, a fresh texture name and mode-change reload fixed some stale GUI cases. A later all-HDR failure required a **full player reboot**, not just Kodi restart. Correct settings and an active process were insufficient proof of correct output. The relay's idle reboot policy must be explicit rather than hidden inside a “self-healing” claim.
 

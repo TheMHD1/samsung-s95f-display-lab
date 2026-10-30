@@ -1,6 +1,7 @@
 # Method
 
 ## 1. The defect is a threshold, not a gain
+
 Camera measurements (RAW, per column and per colour, see CALIBRATION.md) of the uncorrected line at several grey
 levels were fitted with a simple model per column/channel:
 
@@ -20,6 +21,7 @@ So a damaged column is almost a healthy column whose input is shifted down by a 
 Our line was 6 columns wide: two edge columns nearly healthy (0.94-0.97), four core columns at 0.12-0.45 (grey 51).
 
 ## 2. The correction primitive: alpha compositing = per-column affine map
+
 An overlay pixel with alpha `a` and premultiplied colour `C` (C <= a) composited over video `V` gives
 
     out = C + (1 - a) * V
@@ -36,10 +38,11 @@ correction fade out towards bright content. The fitted HDR alphas are about 0.18
 Why "dim + lift" (global dim B): if the damaged column also needs a gain **above** 1 (slope < 1), an overlay alone
 cannot provide it. The trick is to dim the WHOLE picture by B (dim rectangles everywhere except over the line) and
 give the whole picture back a gain of 1/(1 - B/255) somewhere downstream; the line columns, dimmed less, then end up
-with a net gain > 1. We did this with a whole-picture gain inside the TV (see TV-SIDE-CONCEPTS.md, out of scope).
+with a net gain > 1. We did this with a whole-picture gain inside the TV (see [TV graphics research](../advanced/GRAPHICS-AND-GPU.md)).
 Without such a gain keep **B = 0**; the threshold model says the remaining error is small (slope ~1).
 
 ## 3. Columns are not independent in colour: the chroma low-pass finding
+
 - At 50/60 Hz the box sends 2160p as **YCbCr 4:2:2** over the HDMI 2.0 link (24/25/30 Hz go out as 4:4:4), so
   red/blue corrections are effectively per column PAIR at 60 Hz -> separate 444 and 422 profiles, chosen by the relay.
 - Even at 4:4:4 the TV **low-passes colour over about +-2 columns**. On single-colour clips the per-column colour ratios
@@ -49,6 +52,7 @@ Without such a gain keep **B = 0**; the threshold model says the remaining error
 - On our set the 60 Hz profile = 4:4:4 profile with R x0.9 and B x0.97.
 
 ## 4. HDR: correct in the PQ signal domain
+
 In HDR output Kodi converts the GUI (sRGB) inside its composite shader: sRGB -> linear -> BT.2020 -> PQ with a "GUI peak"
 (e.g. 40 % setting). Consequences seen with the SDR strips: the correction was weak, and the dim layer darkened HDR
 video non-uniformly (0.81 at 2 nits ... 0.53 at 100 nits), because the blend happens in PQ code after conversion.
@@ -77,6 +81,7 @@ Rules of thumb from that analysis:
   `a = (D1 - D2) / (P2 - P1)`, `L = D1 + a * P1`, with D = needed dP at each anchor.
 
 ## 5. Our measured affine fit
+
 `hdr_fit.py` replaced the core columns by constant PQ values and found, per column/channel, the PQ output that matches
 the neighbours at 2/5/15/100 nits. One alpha per column + one lift per channel fitted all anchors within **0.008 PQ**:
 
@@ -92,6 +97,7 @@ columns, `S(P) = d ln(light) / dP` (about 30 at P = 0.12 falling to 11 at P = 0.
 Where it fails: below ~1 nit (the needed lift rises faster than a line can follow) and above ~300 nits.
 
 ## 6. Per-column alpha and lift, nothing else
+
 The whole correction is 4 numbers per column (alpha + R/G/B lift) per profile. That is small enough to calibrate
 with a camera in a few hours, robust (no per-level tables), and cheap to apply in the GPU. A per-column 1-D LUT per
 channel would be exact; see IDEAS.md for where that could run.

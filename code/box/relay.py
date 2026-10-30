@@ -11,7 +11,7 @@ Settings: /storage/linefix/relay.json (written by install_box.py from config.jso
      none   Dolby Vision / HLG / unknown HDR / any non-2160p output: no strip (no correction, but also no harm).
    The switch happens while the TV is re-syncing to the new HDMI mode, so it is not visible.
 2. Pixel Shift (optional): GET /x?v=<shift> sets Home property linefix_x; the skin slides the layer by that many panel
-   columns on the next frame. You need your own source for the current shift value (see docs/KODI-LAYER.md);
+   columns on the next frame. You need your own source for the current shift value (see docs/kodi/KODI-LAYER.md);
    without one keep the TV's Pixel Shift OFF.
 3. Optional external HDR hint: GET /h?v=0|1|auto (overrides the box's own SDR/HDR decision; normally unused because the
    box knows its own output state immediately while TVs report HDR seconds late).

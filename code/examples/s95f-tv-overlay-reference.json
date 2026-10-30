@@ -1,5 +1,5 @@
 {
- "_note": "Reference numbers only (no code): the earlier TV-side overlay, a 1920x1080 graphics layer upscaled 2x by the TV. Each graphics pixel p covers panel columns ~2p-1..2p+1, so these are per GRAPHICS pixel [alpha, R, G, B lift], with a full-screen dim 'base' cancelled by a TV-side global gain x trim%. 'odd' = set used when Pixel Shift x is odd. Running it required TV device access, which is out of scope (docs/TV-SIDE-CONCEPTS.md).",
+ "_note": "Reference numbers only (no code): the earlier TV-side overlay, a 1920x1080 graphics layer upscaled 2x by the TV. Each graphics pixel p covers panel columns ~2p-1..2p+1, so these are per GRAPHICS pixel [alpha, R, G, B lift], with a full-screen dim 'base' cancelled by a TV-side global gain x trim%. 'odd' = set used when Pixel Shift x is odd. Running it required TV device access; the mechanism and experimental source are documented separately (docs/advanced/TV-SIDE-OVERVIEW.md).",
  "sdr": {
   "base": 80,
   "trim_percent": 101.3,

@@ -59,6 +59,8 @@ Additional checks include byte `+5 == 0` and byte `+0x10 == 0`. The record has a
 
 This is an **additive header checksum**, not an authenticated payload checksum or proof of original calibration. Two valid slots are not a permanent backup because future saves can reuse them. A real restore would require both raw metadata records, all strided payloads, device/firmware lineage and dependent item state, plus a verified transactional restore and power-loss recovery design. None was qualified.
 
+Later original-instruction models strengthen this: stock wrappers can misclassify payload failures as success, and mode 4 can replace both slots in one invocation. The stock selector also does not check the requested item code. The [consolidated panel dossier](README.md#external-compensation-storage-and-the-candidate-backup) preserves these counterexamples, the wider `0x103` read candidate, and the unresolved storage-selection/completion contract. A committed header or terminal zero is not a verified inverse.
+
 ## Packed sensing offsets are another format
 
 The inspected packer at image0 `0x34138` loops three streams, two halves, 2160 rows and 1920 positions, packing eight 12-bit fields per 12 bytes: **2880 bytes per row**. The source aperture is `0x6bdd8000 + stream*0x32a0000 + half*0x1950000`.

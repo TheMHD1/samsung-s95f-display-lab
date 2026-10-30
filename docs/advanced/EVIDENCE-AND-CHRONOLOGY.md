@@ -36,6 +36,10 @@ This is a sanitized account of local research, not a dump of the working directo
 | Copied buffer size proves RGB planes | Strided saved regions and copied span differ; optical layout unresolved |
 | Lane i means compensation entries for columns 2i,2i+1 | Spatial correlation is not the coefficient consumer/index formula |
 | USB complete + checksum valid means fresh backup | Storage read return can be ignored; stale staging can look valid |
+| Native or stock wrapper success proves intact calibration | App native return codes are discarded; original-instruction models expose stock payload-failure counts misclassified as success |
+| An older calibration slot survives one save | Mode 4 can replace both alternating slots in a single wrapper invocation |
+| The named abort byte or empty queue stops all persistence | Queued saves bypass that abort check; later enqueue and direct writers remain possible |
+| The blackout mask clears bit 0 | The actual bypass sets bit 0; clearing removes it, and the guarded writer rejects unexpected upper bits |
 | Early marker/capture failure rules out TV overlay | Later HWC-aware EFL overlay worked and was measured |
 | TV GPU-memory injection worked | No such correction path was demonstrated; EFL and Kodi source shaders are different |
 | No TV writes happened | Bounded lane-mask and MGA/display-state changes happened; compensation/flash writes did not |
@@ -51,10 +55,13 @@ These are descriptive relative identifiers, not published raw reports or paths t
 | --- | --- |
 | root-access/source and host controller source | [ROOT-ACCESS](ROOT-ACCESS.md) |
 | rtp-lane-table-writers-20261028ec; firmware-rtp-producer-20261028df | [CONTROLLER-COMMUNICATIONS](CONTROLLER-COMMUNICATIONS.md) |
-| tcon-path; tcon-persistence; comp-layout | [FIRMWARE-AND-COMPENSATION](FIRMWARE-AND-COMPENSATION.md) |
-| comp-hardware-decoder; comp-indexing-followup; ip-lut-consumer; ip-lut-apply | Firmware consumer findings and [future dossier](FUTURE-PANEL-CALIBRATION.md) |
+| tcon-path; tcon-persistence; comp-layout | [FIRMWARE-AND-COMPENSATION](panel/FIRMWARE-AND-COMPENSATION.md) |
+| comp-hardware-decoder; comp-indexing-followup; ip-lut-consumer; ip-lut-apply | Firmware consumer findings and [future dossier](panel/FUTURE-PANEL-CALIBRATION.md) |
 | soc-path; receiver-storage; boot-analysis; boot-counterpart | Internal receiver/export and firmware acquisition gaps |
 | deep-dive-20261029/userspace-functions/REPORT; notes/sdm-il | Mobile Demura TV app, managed mobile receiver/write handlers and native TCON flash chain; companion phone app unverified |
+| comp-backup-contract/REPORT; persistence-followup/REPORT | Wider fixed-offset read candidate, false-success counterexamples, both-slot overwrite and absent persistence barrier; [panel dossier](panel/README.md) |
+| storage-metadata-reader/post-acquisition-review/REPORT | Actual transport replay versus unresolved storage completion/freshness |
+| tools/mask_watcher; lane-mask-write-20261028kb/Program | Exact deployed skip direction, guards and recovery state machine; [blackout chapter](BLACKOUT-MITIGATION.md) |
 | overlay-observation; canvas-position-observation; efl-oneframe-live; screenshot-server; capture-strip | [GRAPHICS-AND-GPU](GRAPHICS-AND-GPU.md) |
 | gapfix/LINE-FIX-REPORT sections 2, 7–11; PLAN MGA tests | Later successful overlay, shader, Pixel Shift and reliability work |
 | agent-demura-path and early agent-demura-format recommendations | Historical claims; later concrete traces take precedence |

@@ -1,6 +1,6 @@
 # Controller communications and the lane-mask experiment
 
-This chapter records selected-firmware protocol facts and the past bounded experiment. It is not a general-purpose live controller writer. Firmware coordinates and address domains are defined in [the firmware chapter](FIRMWARE-AND-COMPENSATION.md).
+This chapter records selected-firmware protocol facts and the past bounded experiment. It is not a general-purpose live controller writer. Firmware coordinates and address domains are defined in [the firmware chapter](panel/FIRMWARE-AND-COMPENSATION.md).
 
 ## Two transports, not one
 
@@ -33,8 +33,11 @@ Selected source normalizes the low opcode byte with bit 4 cleared and separately
 | `0x3, 6, 0x200` | Storage metadata read through ID mapping and staging |
 | `0x201, 0, 0x200` | Direct-memory IN from address 0; **not** a storage backup |
 | `0x203, offset, length` | Storage-read branch subject to a first-16-MiB family guard |
+| `0x103, configured_offset, length` | Later source-derived family-1 storage-read candidate; full 32-bit offset survives, but low-level completion is dropped |
 
 The family-2 guard uses 32-bit start/end arithmetic and a `0x01000000` boundary. A portable host validator must also reject integer overflow; never exploit wraparound or aliases to get past it. The calibration slots described later are outside this family window.
+
+The later family-1 candidate does not use that family-2 guard. It is not a verified archive reader: storage selection/capacity, staging freshness and independently observable completion remain unqualified. The [panel dossier](panel/README.md#external-compensation-storage-and-the-candidate-backup) records the positive source bridge and failure cases.
 
 ID **6 is an ID, not an offset**. `6 + n` does not mean comp2+n. With the RAM mapper, ID `6+n`, for n=0..4, selects the buffer starting at `0x7801b000 + n*0xc63000`. With storage mode, ID 6 selects the item-1 metadata slot at storage offset `0x1842ba00`. A caller must not interchange these domains.
 
@@ -61,6 +64,8 @@ The publisher computes primary word = `secondary + 2*counter (mod 2^16)`. Bit 0 
 The tested helper changed only bit 0 for **lanes 540–661 inclusive**, a 122-entry/244-byte window at bus `0x47010438`. Fixed read windows included R `0x47012400:256`, M `0x470004a0:68`, C `0x47000bc0:16`, and that mask window. It retained the existing limits/gates and required exact pre/post readback. A watcher reconciled state after standby/reset.
 
 The owner observed improved blackout behaviour. This changes the eligibility of damaged lanes in a **sensing-consistency check**; it is not a physical repair or proof against every shutdown. Current-monitor/PMIC protections were separate and were not deliberately changed. Suppressing a diagnostic still reduces protection/diagnostic coverage in that path; “all protections intact” would overstate the result. The damaged region's heat was pre-existing and content-dependent.
+
+The exact bypass direction is **set bit 0** (`old | 1`). The actual writer also requires no upper-bit history in its admitted window; it refuses unexpected non-bit-0 content rather than overwriting it. The full [blackout mitigation](BLACKOUT-MITIGATION.md) records the original symptoms, writer admission, watcher, recovery budgets and source-aware behavior.
 
 The measured spatial correlation suggested two image columns per lane on this panel, but that does **not** establish comp2 coefficient indexing or a universal electrode map. Do not derive a panel writer by dividing a screen column by two.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HDR step 1 - direct fit (needs the patched shader active, see docs/HDR-SHADER.md).
+"""HDR step 1 - direct fit (needs the patched shader active, see docs/kodi/HDR-SHADER.md).
 
   hdr_fit.py <tag> 2,15,100 [offsets=0.06,0.12,0.18]
 

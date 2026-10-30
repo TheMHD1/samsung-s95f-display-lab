@@ -4,6 +4,7 @@ A correction that is wrong for a few seconds is worse than none (a bright or dar
 goal was: in every state the screen is either correctly corrected or completely stock.
 
 ## 1. Layers of defence
+
 | what | where | handles |
 |---|---|---|
 | profile switching every 0.2 s | relay (box) | SDR/HDR/refresh-rate changes, DV/HLG/non-2160p -> no strip |
@@ -16,6 +17,7 @@ goal was: in every state the screen is either correctly corrected or completely 
 | locks with expiry | both | `profile.lock` ignored after 2 h, `keeper.hold` after 4 h: a crashed calibration cannot freeze things |
 
 ## 2. The HDMI re-plug incident
+
 Rebooting the soundbar between box and TV caused two HDMI re-plugs on the box (bar restart, then the eARC handshake;
 Kodi logged that a hot-plug mode switch was ignored while the HDMI connector was not ready). Afterwards the strip
 stopped correcting in SDR and HDR although every Kodi property looked right. Re-applying everything fixed SDR ->
@@ -28,6 +30,7 @@ once at a quiet moment (no video for 20 s, uptime > 5 min, at most every 30 min)
 with `touch /storage/linefix/no-auto-reboot` or `auto_reboot_after_replug: false`.
 
 ## 3. Pitfalls and lessons
+
 Kodi / JSON-RPC
 - `Player.Open`'s `repeat` option is ignored; send `Player.SetRepeat` after opening.
 - Some Matroska Dolby Vision test files are rejected by JSON-RPC `Player.Open`; the built-in `PlayMedia()` plays them.
@@ -60,6 +63,7 @@ Your computer / scripts
 - Missing values from a status probe keep their last value; one timeout must never flip SDR/HDR.
 
 ## 4. Turning it off
+
 | scope | how |
 |---|---|
 | layer, instantly | `python3 linefix_skin.py off` (removes the flag, clears `linefix_on`) |

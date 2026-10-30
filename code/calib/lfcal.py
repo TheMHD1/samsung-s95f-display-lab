@@ -1,7 +1,7 @@
 """Calibration library: apply a profile, play a test clip, shoot it, return per-column ratios.
 
 Used by sdr_round.py, sdr_chroma.py, hdr_fit.py, hdr_round.py, verify.py, reference.py.
-Rules learned the hard way (see docs/CALIBRATION.md):
+Rules learned the hard way (see docs/kodi/CALIBRATION.md):
   - a pattern is on screen ONLY for the photo: playback is stopped right after every shot;
   - clips are small windows around the line on black, never bright full-screen fields;
   - wait until the clip really plays at the expected refresh rate, then ~5 s more (Kodi shows a 'now playing'

@@ -1,19 +1,23 @@
 # TV reverse engineering and future panel correction
 
-This is the technical research record behind the Kodi correction, expanded on 2026-10-30. The original public package omitted root access, controller protocols and firmware details. Those topics are now documented here so future work can start from what was actually learned.
+The TV/controller track of [Samsung S95F Display Lab](../../README.md): root access, fault mitigation, graphics correction and the firmware evidence behind future panel calibration. Start with the result you want to understand, then follow its source and transport requirements.
 
-The ordinary [Kodi installation](../../README.md#quick-guide) still needs no TV root. This section describes additional, model-specific experiments. Publishing their mechanisms does not turn them into a tested panel-calibration procedure.
+The ordinary [Kodi installation](../kodi/README.md#quick-guide) needs no TV root. The TV experiments are model-specific; panel programming remains research rather than a tested procedure.
 
 ## Reading order
 
 | Document | Contents |
 | --- | --- |
+| [Blackout/crash mitigation](BLACKOUT-MITIGATION.md) | Fault evidence, exact skip-bit direction/window, guarded RAM writes, watcher/recovery design and limits |
+| [TV-side overview](TV-SIDE-OVERVIEW.md) | How the working overlay, controller fix and player correction fit together |
 | [Root access](ROOT-ACCESS.md) | The actual SDK archive-root chain, prerequisites, public tooling, authenticated host controller, and its distinction from GPU exploits |
 | [Controller communications](CONTROLLER-COMMUNICATIONS.md) | USB framing, address spaces, RAM/storage modes, lane masking, read freshness and transaction ownership |
-| [Firmware and compensation](FIRMWARE-AND-COMPENSATION.md) | Firmware coordinates, comp2/comp6 storage, persistence, checksums, EXCO/IP-LUT and internal demura |
+| [Firmware and compensation](panel/FIRMWARE-AND-COMPENSATION.md) | Firmware coordinates, comp2/comp6 storage, persistence, checksums, EXCO/IP-LUT and internal demura |
 | [Graphics and GPU research](GRAPHICS-AND-GPU.md) | EFL/HWC overlay, MGA register interface, captures, ABI findings, Kodi shader, and unproved memory-injection ideas |
-| [Future panel-native dossier](FUTURE-PANEL-CALIBRATION.md) | What is needed to build a real writer, candidate paths, backup/restore requirements, experiments and decision gates |
+| [Mobile Demura and panel flashing](panel/README.md) | Consolidated mobile app/flash chain, receiver framing, backup false-success cases, both-slot overwrite and missing phone/format/restore evidence |
+| [Future panel-native dossier](panel/FUTURE-PANEL-CALIBRATION.md) | What is needed to build a real writer, candidate paths, backup/restore requirements, experiments and decision gates |
 | [Evidence and chronology](EVIDENCE-AND-CHRONOLOGY.md) | Evidence levels, experiment sequence, corrected earlier claims and source-report index |
+| [Future image-processing ideas](IDEAS.md) | Historical proposals for LUTs, row patterns, adaptive fitting and alternate playback paths |
 | [Research tools](../../research/README.md) | Offline protocol/layout/checksum inspection and the experimental EFL overlay source |
 
 ## What worked, and what did not

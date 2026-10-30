@@ -1,5 +1,14 @@
 # Research tools
 
+Part of [Samsung S95F Display Lab](../README.md). Choose a component:
+
+| Directory / file | Purpose |
+| --- | --- |
+| [tv-overlay/](tv-overlay/README.md) | Experimental EFL client source for the measured TV graphics route |
+| [root-access/](root-access/README.md) | Pinned upstream root tooling and the S95F runtime-discovery patch |
+| [panel/](panel/README.md) | Provenance manifest and links into Mobile Demura / panel-storage research |
+| `formats.py`, `inspect_formats.py`, `tests/` | Offline USB/header/layout/checksum models and tests |
+
 These small offline tools preserve the useful protocol and storage-format discoveries. They do not bootstrap root, open devices, make network requests, decrypt firmware, dump calibration or write a panel. They inspect **local regular files** and synthetic inputs only.
 
 From the repository root:

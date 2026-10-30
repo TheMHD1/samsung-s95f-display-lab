@@ -3,7 +3,7 @@
 
   sdr_round.py <tag> [damp=0.6] [--state examples/my-sdr-444.json]
 
-Model per column (8-bit GUI code domain, see docs/METHOD.md): out = lift + k * video, k = 1 - alpha/255.
+Model per column (8-bit GUI code domain, see docs/kodi/METHOD.md): out = lift + k * video, k = 1 - alpha/255.
   - lift per channel from the DARK levels 13 and 26: the panel's light ~ code^GAM, so a light ratio r means the
     code is off by a factor r^(-1/GAM); the needed code change is (lift + k*L) * (r^(-1/GAM) - 1), averaged, damped.
   - k (one per column, all channels) from the BRIGHT level 102 (geometric mean of the three channels).
@@ -12,7 +12,7 @@ Constraints: 0 <= alpha <= 150, 0 <= lift <= alpha (premultiplied; a lift above 
 dark levels need more lift than the bright-level alpha allows, alpha is raised (dark scenes are where the line shows).
 Start state: copy examples/s95f-sdr-444.json and zero the strips, or start from those numbers. Typically 3 rounds.
 With B = 0 (no global dim) the line can only be made brighter by lift, not by gain: k <= 1. That is enough when the
-defect is a threshold (offset) - see docs/METHOD.md - but highlights in the line may stay slightly dim.
+defect is a threshold (offset) - see docs/kodi/METHOD.md - but highlights in the line may stay slightly dim.
 """
 import argparse, os, sys
 import numpy as np

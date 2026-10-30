@@ -5,6 +5,7 @@ Code: `code/camera/measure.py` (capture + RAW analysis, runs where the camera is
 in the same photo**, so exposure, camera response and TV brightness drift cancel out.
 
 ## 1. Why a camera, and which
+
 - A spot meter reads a circle of ~2 cm; the line is a few mm wide and is diluted to ~14 %; near-black is below every
   meter's floor; it cannot separate columns. Factory panel compensation also uses imaging cameras.
 - A phone "RAW" is demosaiced, multi-frame merged and smoothed: 15-60 % shot-to-shot spread in our first attempt.
@@ -13,6 +14,7 @@ in the same photo**, so exposure, camera response and TV brightness drift cancel
   subpixels resolved; repeated shots agree within about +-1 %.
 
 ## 2. Camera setup (once)
+
 - M mode, ISO 100, f/5.6-8, RAW only (lossless/uncompressed 14-bit; avoid modes that drop to 12-bit, e.g. silent
   shutter on some bodies), stabiliser off, long-exposure noise reduction off, save to computer only, auto power-off
   longest. Autofocus once on the line, then manual focus and don't touch it.
@@ -23,6 +25,7 @@ in the same photo**, so exposure, camera response and TV brightness drift cancel
   grey 51 at 1/4 s, grey 102 at 1/20 s; HDR 2 nits 0.6 s, 100 nits 1/60 s.
 
 ## 3. RAW analysis (measure.py)
+
 1. Read the RAW with rawpy; use `raw_image_visible` and the CFA colour map (no demosaicing - it mixes neighbouring
    subpixels); subtract the black level; build half-resolution R, G (mean of both greens), B planes.
 2. Average the central rows of each plane -> one profile per colour along x.
@@ -34,6 +37,7 @@ in the same photo**, so exposure, camera response and TV brightness drift cancel
    saturated-pixel fraction (clipping check).
 
 ## 4. From camera columns to panel columns (camctl.py)
+
 - `calib/reference.py` shoots the UNCORRECTED line at grey 51 and stores the camera position of the darkest column,
   which you identified as `line.ref_col` with the ruler/marker clips. Later frames use the column nearest that
   position (after correction there is no darkest column any more). Re-run it whenever the camera moves.
@@ -43,6 +47,7 @@ in the same photo**, so exposure, camera response and TV brightness drift cancel
 - Validation: healthy columns must read 1.00 +- 0.02, repeated shots +-1 %. If not, fix the setup before calibrating.
 
 ## 5. Measurement rules (learned the hard way)
+
 - Test clips are small windows around the line on black (`make_clips.py`), never full-screen bright fields.
 - The pattern is on screen **only for the photo**: every measurement starts the clip, waits, shoots, stops playback.
 - Wait until the clip really plays at the expected refresh rate (24 Hz clips -> 4:4:4 profile, `f60` clips -> 4:2:2),
@@ -56,6 +61,7 @@ in the same photo**, so exposure, camera response and TV brightness drift cancel
 - Delete RAWs after analysis (default); keep the per-shot numbers (`calib-data.jsonl`).
 
 ## 6. Rounds
+
 **SDR (`sdr_round.py`, 24 Hz clips, profile 444).** Measure grey 13/26/51/102. Per column and channel, the lift is
 updated from the dark levels: a light ratio `r` means the drive is off by `r^(-1/2)` (panel response ~ code^2), so
 `d_lift = (lift + k*L) * (r^(-1/2) - 1)` averaged over 13 and 26, times a damping of 0.6. The column gain
@@ -71,6 +77,7 @@ is ~0; copy to a 4:2:2 profile and repeat with `f60` clips (our result: R x0.9, 
 photos; our final HDR profile was the midpoint of a plain refit and a refit weighted towards 0.5 nits.
 
 ## 7. Convergence and our numbers (S95F, columns 1255-1260)
+
 | stage | result (core columns) |
 |---|---|
 | uncorrected, grey 51 (R/G/B) | 1256 .39/.36/.38, 1257 .27/.23/.12, 1258 .31/.28/.12, 1259 .45/.41/.22; edges 1255 ~.97, 1260 .94/.89/.72 |
@@ -84,5 +91,6 @@ Final strips: `code/examples/s95f-*.json`. Example (SDR 4:4:4, [alpha, R, G, B])
 HDR v2: 1257 [61.2, 38.2, 41.4, 52.3] (/255 = PQ).
 
 ## 8. Keep an eye on drift
+
 Panels age and a damaged area can change. Re-run `verify.py` (a few minutes) every month or after anything changed
 (firmware, picture mode). The reference shot must be redone whenever the camera moved.

@@ -1,12 +1,12 @@
 """Kodi correction layer: skin dialog XML + strip textures (SDR and HDR v2 parameter block) + installer.
 
-How the layer works (details: docs/KODI-LAYER.md)
+How the layer works (details: docs/kodi/KODI-LAYER.md)
 - Kodi's GUI must run at native 4K (CoreELEC setting coreelec.amlogic.disableguiscaling = true), so one GUI pixel
   is one panel column. The skin works in 1920x1080 units, so one panel column = 0.5 skin units.
 - A dialog window (Custom_<id>_LineFix.xml, no focusable controls -> never takes remote input) is visible while the
   Home window property `linefix_on` is set. It holds:
     * optional full-screen dim rectangles (alpha B) left and right of the line - only if you have a matching global gain
-      elsewhere (see docs/METHOD.md; default B = 0),
+      elsewhere (see docs/kodi/METHOD.md; default B = 0),
     * one image = the strip texture over columns C0..C1, path taken from Home property `linefix_strip`.
 - Pixel Shift: the whole group slides by `linefix_x` panel columns via instant conditional slide animations.
 - HDR: Home property `linefix_hdr` hides the dim rectangles; the HDR strip is a parameter block read by the patched

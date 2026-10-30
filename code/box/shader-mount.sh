@@ -1,6 +1,6 @@
 #!/bin/sh
 # OLED line fix: mount a copy of Kodi's shader tree in which the GUI composite shader also applies the per-column
-# HDR correction (see docs/HDR-SHADER.md). Runs once at boot, before Kodi (linefix-shaders.service).
+# HDR correction (see docs/kodi/HDR-SHADER.md). Runs once at boot, before Kodi (linefix-shaders.service).
 #
 # Safety:
 # - Nothing in the read-only system image is changed: a copy of the stock tree is bind-mounted over the original.

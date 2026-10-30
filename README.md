@@ -1,137 +1,68 @@
-# OLED dead/dim column line fix (Kodi / CoreELEC)
+# Samsung S95F Display Lab
 
-Hide a faint vertical line of damaged columns on an OLED TV by drawing a **pixel-exact, per-column, per-colour
-correction** into the picture before it leaves a Kodi player box, calibrated with a RAW-capable camera.
+**Inside a damaged QD-OLED: controller-memory blackout mitigation, TV graphics correction, calibrated SDR/HDR shaders, and the firmware research behind future panel calibration.**
 
-Developed on a 77-inch Samsung S95F (QD-OLED) whose panel columns **1255-1260** (of 3840) had become dim after
-physical damage, fed by a CoreELEC box (Ugoos AM9 Pro, Amlogic S905X5-J). The default Kodi installation modifies
-only the player box and runs its controller/calibration tools on your computer; it does not need TV root.
+This project began with a physically damaged **77-inch Samsung S95F**: a dim vertical line and recurring panel blackouts. It grew into an investigation across the TV's root-access chain, display compositor, controller RAM, sensing logic and calibration storage—and a working correction system on a **Ugoos AM9 Pro running CoreELEC/Kodi with Arctic Fuse 3**.
 
-The [advanced research handbook](docs/advanced/README.md) also documents the TV-side work: the actual root-access
-chain, controller communications, firmware/storage findings, successful overlay/gain experiments, GPU research,
-and an organized [future panel-calibration dossier](docs/advanced/FUTURE-PANEL-CALIBRATION.md). It includes static
-addresses and formats and clearly marks what was measured, source-derived or not attempted. Optional experimental
-TV overlay source is separate from the ordinary installer. No panel-calibration writer has been established.
+We traced how faults reach the panel-stop path, deployed a bounded RAM mask that resolved the owner's recurring blackouts, made a TV-side overlay affect HDMI, measured a paired graphics/gain correction, and built a sharper native-4K player correction for SDR and HDR. We also traced real compensation-storage writes and found why several apparent success and rollback signals cannot be trusted.
 
-> Not a repair. The damaged subpixels stay damaged; the picture sent to them is pre-distorted so the line blends in.
-> It only works for content played **through Kodi on the box**. Read [SAFETY.md](SAFETY.md) first.
+**[Start here →](docs/START-HERE.md)** · [TV research handbook](docs/advanced/README.md) · [Kodi installation](docs/kodi/README.md) · [Mobile Demura / panel dossier](docs/advanced/panel/README.md)
 
-## Results (camera-measured, ratio of each damaged column to its healthy neighbours; 1.00 = invisible)
+## What we achieved
 
-Uncorrected, the four core columns read **0.05-0.45** in SDR (grey 13-102; at grey 51 per column R/G/B:
-0.39/0.36/0.38, 0.27/0.23/0.12, 0.31/0.28/0.12, 0.45/0.41/0.22, blue worst) and about **0.02** at 2 nits in HDR.
+| Result | What actually happened | Evidence / guide |
+| --- | --- | --- |
+| **Recurring blackout mitigation** | Set skip flags for controller lanes 540–661 through guarded RAM writes; a source-aware watcher re-verifies and reapplies the mask after controller resets | Owner-confirmed outcome; [fault, bypass and recovery](docs/advanced/BLACKOUT-MITIGATION.md) |
+| **TV-side graphics correction** | Root-run EFL overlay, HWC/compositor changes and paired MGA RGB gain affected the tested HDMI image; measured background preservation at grey 51 was 1.000 ± 0.2% | Camera-measured; [graphics and gain research](docs/advanced/GRAPHICS-AND-GPU.md) |
+| **Native-4K Kodi correction** | Per-column/per-colour strips, Arctic skin integration, separate chroma profiles and a raw-PQ HDR GUI-composite shader | Working code and camera results; [installation and results](docs/kodi/README.md) |
+| **Root-access compatibility work** | The SDK archive-root path worked on the retained S95F setup; the actual runtime-discovery delta is published | Target-observed; [root chain and patch](docs/advanced/ROOT-ACCESS.md) |
+| **Controller and firmware reconstruction** | USB protocol, RAM aliases, sensing-table writers, fault producers, compensation save/load descriptors and hardware-LUT transfer paths | Static traces and host models; [controller](docs/advanced/CONTROLLER-COMMUNICATIONS.md) / [firmware](docs/advanced/panel/FIRMWARE-AND-COMPENSATION.md) |
+| **Mobile Demura / panel-flashing research** | Identified the TV service app and TCON flash chain; later source models exposed false-success and both-slot-overwrite cases in stock storage routines | Research only; [consolidated dossier](docs/advanced/panel/README.md) |
 
-| Content | Corrected (core columns) |
-|---|---|
-| SDR grey 13/255 (very dark) | 0.96-1.19 |
-| SDR grey 26 | ~1.0-1.1 |
-| SDR grey 51 | 0.98-1.09 |
-| SDR grey 102 | 0.96-1.05 |
-| HDR10 0.5 nits | 0.53-0.86 (limit of the method) |
-| HDR10 2 nits | 0.92-1.18 |
-| HDR10 15 nits | 0.93-1.08 |
-| HDR10 100 nits | 0.81-0.96 |
+The distinction matters: the blackout fix writes **controller RAM**; the TV line correction uses **graphics composition plus display gain**; the Kodi HDR correction modifies a **player shader**. A direct TV GPU-memory/video-injection loop has not been demonstrated. This is substantial reverse engineering of selected display paths, rather than a claim to have decoded the entire television.
 
-**Honest caveat for SDR:** these SDR numbers were measured with an optional full-screen dim (B=60) in the layer that
-was cancelled by a whole-picture gain applied inside the TV, which needed device access and is NOT part of this
-package. This package defaults to B=0 (lift + alpha only, the same form that produced the HDR results without any
-TV-side help). Expect similar dark-scene results; bright highlights inside the line may stay slightly dim. The B=0
-SDR variant was not separately camera-verified on our set.
+## See the correction results
 
-Healthy neighbour columns stay at 1.00 (only a +10-25 % local lift at very dark grey 13). With Pixel Shift following
-(optional, see docs) the result holds at any shift. Full numbers and limits: [docs/RESULTS-AND-LIMITS.md](docs/RESULTS-AND-LIMITS.md).
+These are measured damaged-column / neighbouring-column luminance ratios on the original set. **1.00 means equal measured luminance**, not a guarantee that every artifact is invisible.
 
-## How it works (one paragraph)
-The damaged columns behave like healthy ones **minus a fixed drive threshold**: dark content vanishes, bright content
-is almost normal. The correction per column and colour channel is therefore an affine map `out = lift + (1 - alpha) * in`
-(mostly lift, a little dimming at high levels). Kodi's GUI is switched to native 4K so one GUI pixel = one panel
-column; a skin dialog draws a thin strip texture over the line that does exactly this blend. In HDR, Kodi converts
-the GUI to PQ inside a shader, so a small patch to that shader applies the same affine correction directly in the PQ
-signal domain. A relay on the box switches between SDR 4:4:4, SDR 4:2:2 and HDR profiles automatically and self-heals
-after HDMI resets. Details: [docs/METHOD.md](docs/METHOD.md).
+| Test | Before | After |
+| --- | --- | --- |
+| SDR grey 51/255, core columns | About 0.12–0.45 across RGB | 0.98–1.09 |
+| HDR10 2-nit target, core columns | About 0.02 | 0.92–1.18 |
+| HDR10 0.5-nit target | Severe near-black loss | 0.53–0.86; correction remains limited |
 
-## Requirements
-- **CoreELEC box (Amlogic) able to run the Kodi GUI at native 4K** (`coreelec.amlogic.disableguiscaling`), output
-  2160p to the TV. Tested: CoreELEC 22 nightly, kernel 5.15, Kodi with the GLES `gles_gui_composite.frag` HDR GUI shader.
-  HDR correction needs that shader; SDR works without it.
-- A Kodi skin you can add one XML file to (tested: Arctic Fuse 3; any skin works, set the path in the config).
-- **A camera that shoots RAW and can be tethered with gphoto2** (tested: Sony a7 IV + 75 mm, ~25-40 cm from the
-  screen, tripod). A phone camera is not enough (processed "RAW", 15-60 % shot-to-shot spread in our tests).
-- A computer (Linux/macOS) with Python 3 + numpy, Pillow, rawpy, ffmpeg with libx265, ssh/scp, `patch`, gphoto2.
-- A dark room, about half a day for the first calibration.
+The SDR result used a coupled dimming/TV-gain configuration. The default Kodi installer uses a different B=0 variant that was not separately camera-verified in SDR. HDR figures refer to the tested player path; TV-overlay performance is limited by a 1080p canvas scaled to 4K. See [all measurements and limits](docs/kodi/RESULTS-AND-LIMITS.md) before reusing the numbers.
 
-## Quick guide
-All commands run from `code/` on your computer. Copy `config.example.json` to `config.json` and set `box.host`.
+## Choose a path
 
-**0. Prepare.** CoreELEC: enable SSH and add your SSH key. Kodi: *Settings > Services > Control*: allow remote control
-from applications on this system. *Settings > Player > Videos*: adjust display refresh rate = on start/stop, whitelist
-only 2160p modes. Leave colour depth/subsampling on Auto. TV: **Pixel Shift OFF** (see docs/KODI-LAYER.md), picture size
-"fit to screen" (no overscan), sharpness 0, the picture mode you will watch in. `pip install numpy pillow rawpy`.
-Pixel Shift may remain on only with a calibrated, verified follower; the original set later used following successfully.
-Do not reuse an old fixed-column profile after the image shifts.
+- **Reproduce the player correction:** follow the [Kodi guide](docs/kodi/README.md). It covers finding columns, installing the layer/relay/shader, RAW-camera calibration, profiles and removal. Ordinary installation needs no TV root.
+- **Understand or continue the TV work:** read [the research handbook](docs/advanced/README.md), starting with the blackout and graphics chapters. The TV tools are model- and firmware-specific research, with an experimental EFL client and the root compatibility patch published separately.
+- **Prepare for native panel calibration:** read [Mobile Demura and panel flashing](docs/advanced/panel/README.md), then the [future research plan](docs/advanced/panel/FUTURE-PANEL-CALIBRATION.md). Exact known formats, failed assumptions and missing evidence are preserved. No qualified calibration writer or restore procedure exists yet.
 
-**1. Find your columns.**
-```
-python3 install_box.py install --no-shader     # switches Kodi to the native 4K GUI, installs the relay
-python3 calib/make_clips.py ruler              # ruler clip around line.ref_col (set a rough guess first)
-```
-Play `/storage/linefix/clips/ruler.mp4` in Kodi: ticks every 10 columns, numbers every 100 columns; read where the line is,
-then confirm exact columns with `make_clips.py marker --col N` (a 1-pixel black column must sit exactly on the edge
-of the line). Put the first/last damaged column into `line.c0` / `line.c1`, the darkest into `line.ref_col`, and set
-`shader.col_min/col_max` to about `c0 - 55` / `c1 + 60`. Update `bg_left/bg_right/report_cols` (columns 10-40 away).
+## Project map
 
-**2. Install the layer.**
-```
-python3 install_box.py install --restart-kodi  # relay + HDR shader override (md5-guarded, see docs/HDR-SHADER.md)
-cp examples/starter-sdr.json my-sdr-444.json   # edit the column keys to your c0..c1
-python3 linefix_skin.py install                # skin dialog + strips; the layer is now on (still uncorrected)
-```
+| Area | Contents |
+| --- | --- |
+| [docs/START-HERE.md](docs/START-HERE.md) | Guided reading and workflow choices |
+| [TV research](docs/advanced/README.md) | Root, blackout mitigation, controller communications, graphics, evidence and chronology |
+| [Panel research](docs/advanced/panel/README.md) | Mobile service app, flash chains, compensation storage, backup failures and future work |
+| [Kodi guide](docs/kodi/README.md) | Installation, calibration, SDR/HDR method and operational lessons |
+| [code/](code/) | Configurable installer, skin/strip generator, relay, shader patch, keeper and camera tools |
+| [research/](research/README.md) | Offline format inspectors/tests, experimental TV overlay and archive-root patch |
 
-**3. Calibrate** (camera setup: [docs/CALIBRATION.md](docs/CALIBRATION.md)).
-```
-python3 calib/make_clips.py sdr && python3 calib/make_clips.py hdr
-python3 calib/reference.py                     # locate the line in the camera image; prints 'before' ratios
-python3 calib/sdr_round.py r1                  # repeat r2, r3 ... until all columns are 0.95-1.10
-cp my-sdr-444.json my-sdr-422.json
-python3 calib/sdr_chroma.py c1 0.9 0.97 --state my-sdr-422.json    # 50/60 Hz profile; tune by the 'sum' values
-python3 calib/hdr_fit.py h0 2,15,100 && cp h0-hdr-initial.json my-hdr.json
-python3 calib/hdr_round.py h1 0.6 0p5,2,15,100  # 2-3 rounds
-python3 calib/verify.py final grey:13 grey:51 grey:102 hdr:2 hdr:100 --state my-hdr.json
-python3 linefix_skin.py install                # install the final profiles; the relay picks them by output mode
-```
+## Scope and reproducibility
 
-**4. Keep it running (optional).** `python3 keeper.py` re-installs the layer after skin/CoreELEC updates and checks the
-4K GUI, profiles and shader after HDMI resets ([docs/RELIABILITY.md](docs/RELIABILITY.md)).
+The physical panel remains damaged. The mask reduces diagnostic coverage in one sensing-consistency path; it does not certify electrical safety. Shared compensation RAM can reach persistent storage through stock firmware, and neither a reboot nor an app `ok` is a verified undo/success mechanism. Read [SAFETY.md](SAFETY.md) before device work.
 
-**Turn off / remove.** `python3 linefix_skin.py off` (instant), `python3 install_box.py uninstall` (everything), then
-restart Kodi. Nothing outside `/storage/linefix`, two unit files and one skin XML is ever written.
+The handbook separates camera measurements, target observations, source facts, host models and hypotheses. Source hashes preserve provenance. Credentials, private device identities, OEM binaries/keys and unique calibration dumps stay outside the repository. The public package provides code where generalized, tested components exist and documents the remaining owner-specific deployment dependencies.
 
-## Documentation
-| | |
-|---|---|
-| [docs/METHOD.md](docs/METHOD.md) | physics of the defect, why dim+lift, chroma low-pass, PQ-domain correction, affine fit |
-| [docs/KODI-LAYER.md](docs/KODI-LAYER.md) | native 4K GUI, skin dialog, strip textures, Pixel Shift following, profiles |
-| [docs/HDR-SHADER.md](docs/HDR-SHADER.md) | the GUI composite shader patch, parameter block, compositing formula, guard |
-| [docs/CALIBRATION.md](docs/CALIBRATION.md) | camera setup, RAW CFA planes, subpixel phase, rules, rounds, example numbers |
-| [docs/RELIABILITY.md](docs/RELIABILITY.md) | self-heal, enforcement, pitfalls and lessons |
-| [docs/RESULTS-AND-LIMITS.md](docs/RESULTS-AND-LIMITS.md) | all measured numbers, what it cannot do |
-| [docs/IDEAS.md](docs/IDEAS.md) | unexplored directions |
-| [docs/TV-SIDE-CONCEPTS.md](docs/TV-SIDE-CONCEPTS.md) | overview of the TV experiments and their evidence boundaries |
-| [docs/advanced/README.md](docs/advanced/README.md) | detailed root, controller, firmware, GPU/compositor research and chronology |
-| [docs/advanced/FUTURE-PANEL-CALIBRATION.md](docs/advanced/FUTURE-PANEL-CALIBRATION.md) | saved future research plan for panel-native correction, including missing format/restore proofs |
-| [research/README.md](research/README.md) | offline protocol/layout/checksum tools and experimental TV EFL overlay source |
+Offline tools can be checked without a TV:
 
-## Layout
-```
-code/  config.example.json  lfconfig.py  linefix_skin.py  install_box.py  keeper.py
-       box/     relay.py, shader-mount.sh, systemd units, shaders/ (patched shader + .patch)
-       calib/   make_clips.py, reference.py, sdr_round.py, sdr_chroma.py, hdr_fit.py, hdr_round.py, verify.py, lfcal.py
-       camera/  measure.py (RAW CFA column extraction), camctl.py (ratios vs neighbours)
-       examples/ S95F profiles and reference numbers, starter profile
-research/ offline format inspector and synthetic tests; tv-overlay/ experimental EFL client source
-docs/advanced/ root, controller, compensation/firmware, graphics/GPU, future panel work, evidence
+```sh
+python3 -m unittest discover -s research/tests -v
+python3 research/inspect_formats.py layout comp2 0
 ```
 
 ## License
-MIT ([LICENSE](LICENSE)), except `code/box/shaders/*`, which is derived from Kodi and stays GPL-2.0-or-later.
-Not affiliated with Samsung, Kodi or CoreELEC. Use at your own risk.
+
+MIT ([LICENSE](LICENSE)), except `code/box/shaders/*`, derived from Kodi and licensed GPL-2.0-or-later. Independent owner-device research; not affiliated with Samsung, Kodi or CoreELEC.

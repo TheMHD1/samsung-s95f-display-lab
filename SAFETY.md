@@ -22,9 +22,9 @@ A damaged OLED panel needs care. These rules come from real incidents during thi
   suppresses part of a sensing-consistency check; it is not a physical repair or proof of unchanged protection coverage.
 - No compensation-buffer, calibration-storage or firmware/config-flash write was attempted. Firmware analysis found a
   real stock save path from comp2/comp6 RAM to storage: reboot is not a verified undo. A common firmware file is not a
-  backup of unique panel calibration. See the [firmware findings](docs/advanced/FIRMWARE-AND-COMPENSATION.md).
+  backup of unique panel calibration. See the [firmware findings](docs/advanced/panel/FIRMWARE-AND-COMPENSATION.md).
 - Future panel programming requires a recovered format/consumer and verified backup, restore and power-loss recovery.
-  The [future dossier](docs/advanced/FUTURE-PANEL-CALIBRATION.md) records those gaps and the research sequence; no
+  The [future dossier](docs/advanced/panel/FUTURE-PANEL-CALIBRATION.md) records those gaps and the research sequence; no
   guessed panel writer is included. Do not interpret documented addresses as a ready-to-run repair procedure.
 - TV overlay dimming, MGA gain and compositor state must be restored together. Stopping only one can leave the
   picture globally dimmed or boosted. Root UID alone does not supply a safe graphics ABI or controller contract.
