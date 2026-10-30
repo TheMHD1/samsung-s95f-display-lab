@@ -54,6 +54,7 @@ These are descriptive relative identifiers, not published raw reports or paths t
 | tcon-path; tcon-persistence; comp-layout | [FIRMWARE-AND-COMPENSATION](FIRMWARE-AND-COMPENSATION.md) |
 | comp-hardware-decoder; comp-indexing-followup; ip-lut-consumer; ip-lut-apply | Firmware consumer findings and [future dossier](FUTURE-PANEL-CALIBRATION.md) |
 | soc-path; receiver-storage; boot-analysis; boot-counterpart | Internal receiver/export and firmware acquisition gaps |
+| deep-dive-20261029/userspace-functions/REPORT; notes/sdm-il | Mobile Demura TV app, managed mobile receiver/write handlers and native TCON flash chain; companion phone app unverified |
 | overlay-observation; canvas-position-observation; efl-oneframe-live; screenshot-server; capture-strip | [GRAPHICS-AND-GPU](GRAPHICS-AND-GPU.md) |
 | gapfix/LINE-FIX-REPORT sections 2, 7–11; PLAN MGA tests | Later successful overlay, shader, Pixel Shift and reliability work |
 | agent-demura-path and early agent-demura-format recommendations | Historical claims; later concrete traces take precedence |

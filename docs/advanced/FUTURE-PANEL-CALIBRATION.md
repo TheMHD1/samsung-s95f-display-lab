@@ -23,6 +23,7 @@ None of the investigated panel paths closes that entire chain today.
 | Internal SoC optical-demura blob | Linux export/shared-memory/mailbox path, bounded container | Successful useful dump, receiver executable/contract, coefficient grammar and loader semantics |
 | EXCO/IP-LUT hardware consumer | Staging/DMA/bank/start-table paths | Optical entry meanings, active/shadow-bank behaviour, cache ownership and persistence isolation |
 | Factory/service package path | Write-capable configuration/upgrade machinery | Valid per-panel calibration authoring, service equivalence and verified recovery |
+| Samsung Mobile Demura | TV app `com.samsung.tv.sdm`, mobile-channel receiver and traced TCON flash-write chain | Exact phone/tool identity and access, optical algorithm, table grammar, authorization and verified restore |
 | Independent post-generation shadow buffer | Plausible design | Existence/ownership, source-pointer switch, no save/copy-back alias and deterministic teardown |
 
 The companion [firmware chapter](FIRMWARE-AND-COMPENSATION.md) contains the exact static addresses, storage descriptors and checksum rules. Preserve those details as research leads, not guessed write targets.
@@ -44,6 +45,8 @@ Most importantly, prove restoration **before** relying on the backup: transactio
 Preserve the working Kodi correction and an independently recoverable player card. Hash the firmware inputs; identify image0/image1 coordinates and architecture. Reproduce descriptors, save/load lineage, packet parsing and checksum models without the TV. The included [offline research tools](../../research/README.md) cover small format facts; they are not substitutes for reproducing the original-code traces.
 
 Do not rederive comp2 layout from `3*1920*2160`, a 480-wide loop, the two-columns-per-lane observation or a function name. Those shortcuts were specifically not proved.
+
+For **Mobile Demura**, preserve and hash the matching TV app assembly/manifest and native dependencies privately. Reproduce the receiver-to-file-to-native-write trace described in the [firmware chapter](FIRMWARE-AND-COMPENSATION.md#samsung-mobile-demura-service-app). Identify the companion mobile software through authorized service documentation or package evidence; recover its camera calibration, table authoring, model admission and pairing contracts separately. A mobile transport/parser is not a decoded optical-calibration format. Establish what validates data and what reports actual native completion; the inspected app's `ok` response does not check the native write result. Resolve channel authorization without exposing a live write/erase service, and qualify complete backup/restore before any factory-app launch or calibration upload. No working phone app, external technician device or service workflow was validated here.
 
 ### 2. Qualify useful read-only acquisitions
 

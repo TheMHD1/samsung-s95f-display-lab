@@ -75,6 +75,29 @@ Subheaders describe IP register/LUT and MCU records, destination bases and sourc
 
 This proves transfer machinery, not coefficient meanings, a safe live insertion point, an atomic bank switch or persistence isolation. Generic staging at `0x20210000` is shared with stock state-machine ownership. It is not a free scratch texture or an admitted injection address.
 
+## Samsung Mobile Demura service app
+
+The saved userspace investigation identifies **Mobile Demura**, TV package **`com.samsung.tv.sdm`**, with factory-menu label **“Mobile Demura Launch”**. This was omitted from the first expanded handbook. It is a concrete lead for the technician/mobile-device route, rather than a demonstrated calibration procedure.
+
+The retained `sdm.dll` analysis contains SmartView/MSF channel handling, `SendDataToMobile`, a `Parse22DEMURA` receiver and `WriteDemuraLUT`. The receiver assembles incoming data into `/opt/data/com.samsung.tv.sdm/Data.bin`. The static write chain recorded by the userspace report is:
+
+```text
+Mobile Demura TV app / WriteDemuraLUT
+  → DisplayPanelControl.writeTconDemuraData(Data.bin)
+  → libdisplay-panel.so: capi_write_tcon_demura_data
+  → impl-sec: writeTconDemuraData
+  → libave: ave_api_update_total_mura(0, path)
+  → TCON_UpgradeTotalDemura
+  → QDFTcon_UpgradeTotalDemura
+  → m_total_demura_upgrade / TCON flash update
+```
+
+The managed method tokens are `WriteDemuraLUT` **0x06000024** and `Parse22DEMURA` **0x0600003d**, scoped to that retained assembly. These are metadata tokens, not native addresses or commands. The app also has erase/reload handlers. In the inspected write handler, the native return value is discarded before an `ok` response is sent; that response alone would not establish a successful or correct calibration write.
+
+**What this establishes:** a TV-side mobile-client interface and a traced persistent demura-write route. **What remains unverified:** the exact companion phone app name/package, authorized distribution or technician equipment, pairing/access requirements, camera-to-table computation, valid S95F coefficient format and a qualified backup/restore process. The earlier report describes a service phone sending a camera-derived table; the phone software and optical algorithm were not independently recovered or tested. Do not interpret the TV package ID as an Android APK ID. Neither current service availability nor compatibility across firmware versions was established.
+
+The earlier report also calls the interface unauthenticated. The retained app handlers expose write/erase functionality, but end-to-end SmartView authorization and network reachability were not qualified; retain that as an unresolved access-control finding, not a verified claim about every reachable TV. No app launch, phone pairing or panel write was performed in this project. Future investigation should begin with offline app/manifest and transport analysis, not launching the factory item. See [the future dossier](FUTURE-PANEL-CALIBRATION.md).
+
 ## The internal SoC demura path is separate
 
 The Linux `sdp_tcon` path maps a DT `samsung,demura` region, observed reservation `[0, 0x7fc00000, 0x200000]`, and communicates with internal uCom. The export container is **0x220 bytes of header plus at most 0x181000 payload bytes**. First-word byte order is handled by the driver; container size is not a decoded coefficient layout.
