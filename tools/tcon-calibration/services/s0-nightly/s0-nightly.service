@@ -1,0 +1,23 @@
+# Nightly S0 trim service v3 (reference implementation, ADAPT BEFORE USE). Install with services/install_unit.sh
+# (fills @KIT@ / @CONFIG@ / @S0SVC@ / @WATCHER@ from config.py), or deploy.sh which also seeds the plan and starts it.
+[Unit]
+Description=TCON nightly S0 sensing-gain trim (keeps the damaged-column fix across standby scans)
+StartLimitIntervalSec=3600
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment=TCON_KIT_CONFIG=@CONFIG@
+WorkingDirectory=@KIT@/tcon
+ExecStart=/usr/bin/python3 -B @KIT@/services/s0-nightly/s0_nightly.py --live
+# Remove the watcher pause only if this service set it (marker), e.g. after a SIGKILL on stop timeout.
+ExecStopPost=/bin/sh -c 'if [ -e @S0SVC@/owns_pause ]; then rm -f @WATCHER@/watcher.pause @S0SVC@/owns_pause; fi'
+KillMode=mixed
+TimeoutStopSec=60
+SuccessExitStatus=143 129
+Restart=on-failure
+RestartSec=60
+UMask=0077
+
+[Install]
+WantedBy=default.target

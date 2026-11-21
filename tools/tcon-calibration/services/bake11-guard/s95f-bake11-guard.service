@@ -1,0 +1,26 @@
+# Bake guard (reference implementation, ADAPT BEFORE USE: restore_bake11.py holds the S95F bake-11 words). Checks the stored
+# bake per controller boot + every 12 h (read-only), restores it automatically at a quiet moment if it is gone, watches the
+# night/power-on services. Kill switch: touch <work>/bake11/guard.disable. Tests running: touch <work>/bake11/maintenance.
+# Install: services/install_unit.sh s95f-bake11-guard
+[Unit]
+Description=TCON bake guard (detect a lost bake and restore it automatically)
+After=s0-nightly.service s95f-rt.service
+StartLimitIntervalSec=3600
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment=TCON_KIT_CONFIG=@CONFIG@
+WorkingDirectory=@BAKE11@
+ExecStart=/usr/bin/python3 -B @KIT@/services/bake11-guard/guard.py --live
+# hold / lift / restore jobs are their own transient units (s95f-bake11-<mode>-*) and are NOT stopped with the guard;
+# on stop the guard finishes a running read-only check first (<= 900 s + 120 s)
+KillMode=mixed
+TimeoutStopSec=1100
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=60
+UMask=0077
+
+[Install]
+WantedBy=default.target

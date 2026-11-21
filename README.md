@@ -1,72 +1,81 @@
 # Samsung S95F Display Lab
 
-**Rooted TV research · blackout mitigation · visible-line correction · SDR/HDR calibration**
+**A damaged 77-inch QD-OLED, fixed from inside the TV · blackout mitigation · line calibration · SDR/HDR research**
 
-We obtained **root access to a Samsung S95F TV (UID/EUID 0)** and used it to work with kernel driver interfaces, display registers, controller memory and the graphics compositor. On a physically damaged **77-inch QD-OLED**, that enabled a working blackout mitigation and TV-side line correction. We then built a sharper **native-4K Kodi correction** on a **Ugoos AM9 Pro / CoreELEC / Arctic Fuse 3**.
+> **November 2026: the dark line is fixed inside the TV, for every input and app.** We let the TV's own
+> panel scan measure the damaged columns correctly, so its own compensation drives them again. No flash write.
+> **[Read the story →](docs/advanced/tv-calibration/WRITEUP.md)** · [Results](docs/advanced/tv-calibration/RESULTS.md) ·
+> [Do it yourself](tools/tcon-calibration/GUIDE.md) · [Blackout fix](docs/advanced/BLACKOUT-MITIGATION.md)
 
-**[Start here](docs/START-HERE.md)** · [Root access](docs/advanced/ROOT-ACCESS.md) · [TV graphics fix](docs/advanced/TV-LINE-CORRECTION.md) · [Kodi install](docs/kodi/README.md) · [Blackout fix](docs/advanced/BLACKOUT-MITIGATION.md) · [Panel research](docs/advanced/panel/README.md)
+## Results
 
-## What we fixed
-
-The damaged columns **1255–1260** were too dim, particularly in dark scenes; the panel also repeatedly went black while audio continued. These needed separate solutions.
-
-| Working result | How it works | Coverage |
-| --- | --- | --- |
-| **Stop the recurring panel blackouts** | Guarded controller-RAM writes set skip flags for lanes 540–661. A server watcher verifies the mask and handles bounded recovery after controller resets. | Owner-confirmed on the damaged S95F; suppresses that part of a sensing-consistency check |
-| **Reduce the visible line inside the TV** | An EFL graphics overlay dims the surrounding picture; paired MGA RGB gain restores the background while the damaged strip receives a relative lift. | Camera-measured on the tested TV path; 1080p graphics scaling spreads correction into neighbours |
-| **Correct the line more precisely through Kodi** | A native-4K strip adjusts individual columns and colours. The patched HDR shader applies the correction in raw PQ. | Tested SDR/HDR10/HDR10+ Kodi path; avoids the TV overlay's 2× scaling blur |
-
-These techniques compensate the **image and fault behavior**; the physical panel damage remains.
-
-## The line, photographed
-
-| Phone reference — dark grey | Phone close-up — individual subpixels |
+| Before (October) | After (bake 11, 20 November) |
 | :---: | :---: |
-| <img src="docs/assets/line-before-phone-grey10.jpg" width="310" alt="Original damaged vertical line in a Galaxy phone photo at SDR grey 10"> | <img src="docs/assets/line-before-phone-pixels-grey50.jpg" width="310" alt="Galaxy phone close-up showing dim RGB subpixels at SDR grey 50"> |
-| SDR grey 10; the dark line is prominent. | SDR grey 50; the RGB grid shows the affected columns. |
+| <img src="docs/assets/line-before-content-1.jpg" width="330" alt="Dark vertical line through real content above the impact mark"> | <img src="docs/assets/bake11-after-impact-area.jpg" width="250" alt="Same area after bake 11: no line"> |
 
-These are **original defect/reference photos**, not a matched before/after pair. The later **Sony a7 IV** sessions supplied the calibrated measurements below. We recovered a Sony setup preview, but no confirmed final after-photo or distant after-shot. [Photo gallery, sources and capture limits →](docs/PHOTO-GALLERY.md)
+<img src="docs/assets/bake11-before-after-chart.png" width="720" alt="Band brightness vs healthy neighbours by grey level, before and after bake 11">
 
-## How well does the line correction work?
+- **Before:** the four worst columns gave **~1 % of normal light at 20 % grey** and were black below that.
+- **After:** the band is within **1–2 % of its neighbours from 30 % to 100 % grey**, +3 % at 20 %, +6 % at 10 %.
+- **Still there:** blue is short below ~30 % grey, so the band looks **slightly yellow in very dark scenes**
+  ([why](docs/advanced/tv-calibration/WRITEUP.md#8-what-failed-and-why)).
+- **Blackouts:** the panel used to switch itself off every ~50 s on bad days; with the lane mask, **24 of 24 controller
+  boots** stayed clean.
 
-At a **2-nit HDR target**, the original line measured about **0.02×** its healthy neighbours. Correction brought it close to their brightness. Near black and bright highlights remain harder to match.
+More photos: [gallery in the write-up](docs/advanced/tv-calibration/WRITEUP.md#13-photos-and-tools) · all numbers:
+[RESULTS.md](docs/advanced/tv-calibration/RESULTS.md)
 
-| HDR target | Final Kodi HDR v2 ratio to healthy neighbours | Practical result |
+## How it works, in two pictures
+
+<img src="docs/assets/explain-line-problem.png" width="720" alt="Healthy column reads low and gets drive; damaged column reads falsely high and gets none; bake 11 makes it read low again">
+
+OLED pixels age unevenly, so in standby the TV measures every column and boosts weak ones. The damaged columns gave a
+false "strong" reading and got no boost. **Bake 11** lowers the measurement's gain on those columns just for the scan;
+the TV then boosts them and saves that itself. [Deep dive →](docs/advanced/tv-calibration/WRITEUP.md#3-why-the-tvs-own-compensation-did-not-help)
+
+<img src="docs/assets/explain-blackout-problem.png" width="720" alt="Damaged lanes fail a sensing check, the picture switches off and the controller resets in a loop; a lane mask skips them">
+
+The panel controller kept failing a per-lane sensing check on the damaged lanes, switched the picture off and was
+reset, over and over. A **skip flag for lanes 540–661** in controller RAM, re-applied at every controller boot, ended it.
+[Deep dive →](docs/advanced/BLACKOUT-MITIGATION.md)
+
+<img src="docs/assets/tcon-where-the-fixes-act.png" width="720" alt="Where the three RAM writes act in the panel controller">
+
+## Do it on your own TV
+
+The [guide](tools/tcon-calibration/GUIDE.md) walks through measuring the line with a camera, checking that your
+damage reads the same way, the first bake, tuning per column, the runtime trims, automation and recovery, with the
+[scripts](tools/tcon-calibration/). You need a **root shell on your own TV** (not covered by the guide), the TV's internal
+controller link, a camera on a tripod and a media player for test patterns. Writing to a panel controller can damage
+a TV: read the [safety rules](SAFETY.md) first.
+
+**Other TVs?** The idea may carry over to other OLED and QD-OLED TVs whose damaged columns read wrong in their own
+sensing scan; our addresses and values do not. Nothing was tried on another TV.
+[What carries over →](docs/advanced/tv-calibration/WRITEUP.md#12-will-this-work-on-other-oled-and-qd-oled-tvs)
+
+## Everything we tried on this TV
+
+| Approach | How it works | Status |
 | --- | --- | --- |
-| **0.5 nits — near black** | **0.53–0.86×** | Still visibly dimmer; incomplete correction |
-| **2 nits — dark detail** | **1.01–1.18×** | Close match, with some overcorrection |
-| **5 nits** | **1.06–1.26×** | Some columns remain too bright |
-| **15 nits** | **0.95–1.08×** | Closest measured match in this final profile |
-| **100 nits — brighter test** | **0.81–0.92×** | A residual dim line remains |
-| **Brighter highlights (>100 nits)** | No final measured range published | The affine fit can under-correct above ~300 nits; full-field ABL also affects output |
+| **Scan-time calibration (bake 11)** | Sensing gain in controller RAM before the TV's own scan; runtime trims after each boot | **In use** · [write-up](docs/advanced/tv-calibration/WRITEUP.md) |
+| **Blackout lane mask** | Skip flags for lanes 540–661 in the sensing check, re-applied by a watcher | **In use** · [details](docs/advanced/BLACKOUT-MITIGATION.md) |
+| Native-4K Kodi correction | Per-column strip in the player's GUI and HDR shader | Retired on this TV; works on any display for Kodi content · [guide](docs/kodi/README.md) |
+| TV graphics overlay | EFL overlay plus paired MGA gain | Retired |
 
-**SDR:** measured ratios were **0.96–1.19× at grey 13** and **0.98–1.09× at grey 51**, using paired dimming/TV gain. The default B=0 Kodi SDR variant was not separately camera-verified. SDR code levels are not nit values. **1.00× means equal measured luminance**, not guaranteed invisibility. [Full results](docs/kodi/RESULTS-AND-LIMITS.md) · [Measurement chart](docs/assets/hdr-result-ranges.png)
-
-## Root, kernel, memory and graphics access
-
-| Demonstrated access | What we used it for |
-| --- | --- |
-| **Root session on the TV** | SDK archive-root with an S95F runtime-discovery patch; authenticated host-assisted reacquisition |
-| **Kernel/display-driver interfaces** | Reviewed `/dev/tztv_tcon` ioctls, FRC debugfs register access and display-state investigation |
-| **External controller RAM** | USB read/write transport, sensing-table analysis and the bounded blackout mask |
-| **TV graphics/display controls** | EFL/Wayland surfaces, HWC/compositor control, MGA RGB gain and Pixel Shift following |
-| **Firmware and calibration-storage analysis** | Save/load paths, exact storage descriptors, Mobile Demura flash chain and false-success/rollback findings |
-
-Root did not remove every SMACK restriction. The working TV correction uses **graphics composition and display gain**; direct GPU-memory video injection and unrestricted kernel-memory control were not demonstrated. Native panel-calibration flashing remains research.
+These fixes act on the image and on the fault behavior; the physical damage remains.
 
 ## Guides — pick your goal
 
 | I want to… | Guide |
 | --- | --- |
-| **Obtain compatible root access** | [Prerequisites, S95F patch, commands and session lifecycle](docs/advanced/ROOT-ACCESS.md) |
-| **Understand/reproduce the TV graphics line fix** | [Root → overlay → paired gain → calibration → cleanup](docs/advanced/TV-LINE-CORRECTION.md) |
+| **Fix the line inside the TV (bake 11)** | [Guide, scripts, safety and recovery](tools/tcon-calibration/GUIDE.md) · [the story](docs/advanced/tv-calibration/WRITEUP.md) |
 | **Install the sharper Kodi SDR/HDR line fix** | [Complete installation, Arctic integration, profiles and removal](docs/kodi/README.md) |
 | **Calibrate my own damaged columns** | [RAW-camera setup, reference shots, SDR/chroma/HDR fitting](docs/kodi/CALIBRATION.md) |
 | **Understand the panel blackout/crash bypass** | [Fault evidence, exact skip bits, watcher, recovery and limits](docs/advanced/BLACKOUT-MITIGATION.md) |
 | **Investigate Mobile Demura / future panel flashing** | [App, protocols, firmware, backup failures and remaining gaps](docs/advanced/panel/README.md) |
 | **Build on the reverse engineering** | [Technical handbook and evidence index](docs/advanced/README.md) |
 
-[**Player implementation**](code/README.md) · [**TV overlay / root patch / offline tools**](research/README.md) · [**Photo provenance**](docs/PHOTO-GALLERY.md) · [**Safety and rollback**](SAFETY.md)
+[**Player implementation**](code/README.md) · [**Photo provenance**](docs/PHOTO-GALLERY.md) · [**Safety and rollback**](SAFETY.md)
 
 The blackout mask reduces diagnostic coverage; compensation RAM can reach persistent storage through stock firmware. No panel-calibration flash or qualified native-calibration restore was attempted. This package keeps private device identities, credentials, OEM binaries/keys and unique calibration dumps outside Git.
 

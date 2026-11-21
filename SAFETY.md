@@ -20,12 +20,18 @@ A damaged OLED panel needs care. These rules come from real incidents during thi
   `research/tv-overlay` source are for deliberate owner-device research and are not invoked by that installer.
 - Past TV-side work did change volatile display/compositor/MGA state and a bounded controller lane mask. The mask
   suppresses part of a sensing-consistency check; it is not a physical repair or proof of unchanged protection coverage.
-- No compensation-buffer, calibration-storage or firmware/config-flash write was attempted. Firmware analysis found a
-  real stock save path from comp2/comp6 RAM to storage: reboot is not a verified undo. A common firmware file is not a
-  backup of unique panel calibration. See the [firmware findings](docs/advanced/panel/FIRMWARE-AND-COMPENSATION.md).
+- We never wrote the compensation buffers, calibration storage or firmware/config flash ourselves. Since November 2026
+  the stored compensation **does change through the TV's own scan and save**: the [scan-time calibration](docs/advanced/tv-calibration/WRITEUP.md)
+  sets a sensing gain in controller RAM before the stock scan, and the stock firmware stores the result. Any later scan
+  without that gain stores the stock result again. Firmware analysis found a real stock save path from comp2/comp6 RAM
+  to storage: reboot is not a verified undo. A common firmware file is not a backup of unique panel calibration. See the
+  [firmware findings](docs/advanced/panel/FIRMWARE-AND-COMPENSATION.md).
+- The [calibration tools](tools/tcon-calibration/GUIDE.md) write only bounded RAM words, verify every write by read-back
+  and refuse to run on a controller that is not in its normal state. They still change how a real panel is driven: take
+  a full read-only backup first, step small, check near-black after every change and keep the TV's auto-update off.
 - Future panel programming requires a recovered format/consumer and verified backup, restore and power-loss recovery.
   The [future dossier](docs/advanced/panel/FUTURE-PANEL-CALIBRATION.md) records those gaps and the research sequence; no
-  guessed panel writer is included. Do not interpret documented addresses as a ready-to-run repair procedure.
+  guessed panel writer is included. Documented addresses are specific to this TV and firmware; verify every one on your own TV.
 - TV overlay dimming, MGA gain and compositor state must be restored together. Stopping only one can leave the
   picture globally dimmed or boosted. Root UID alone does not supply a safe graphics ABI or controller contract.
 

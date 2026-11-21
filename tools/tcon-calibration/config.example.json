@@ -1,0 +1,27 @@
+{
+ "_comment": "Copy to config.json (same folder) and edit. Every value here is a placeholder. See GUIDE.md section 2.",
+ "work_dir": "~/tcon-calibration-work",
+ "tv": {
+  "shell": ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", "root@TV", "{cmd}"],
+  "forward": null,
+  "forward_remove": null,
+  "timezone": null,
+  "bake_window": ["10:30", "01:15"],
+  "key_cmd": null,
+  "player_input": "SOURCE_TYPE_HDMI3"
+ },
+ "watcher": {"enabled": false, "dir": null},
+ "player": {
+  "shell": ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", "root@PLAYER", "{cmd}"],
+  "clip_dir": "/storage/linefix/clips",
+  "jsonrpc_port": 9090
+ },
+ "camera": {
+  "capture": ["sh", "-c", "gphoto2 --quiet --capture-image-and-download --force-overwrite --filename '{out}.%C' >/dev/null && ls '{out}'.*"],
+  "raw_cmd": null,
+  "jpeg_cmd": null,
+  "keep_photos": false,
+  "analysis": {"bar_columns": 320, "first_column": 1100, "rows": [0.40, 0.60]}
+ },
+ "alert": {"url": null, "token_file": null}
+}

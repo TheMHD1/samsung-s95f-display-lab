@@ -1,0 +1,15 @@
+{
+ "note": "WORKED EXAMPLE: S95F 77-inch, this firmware only; verify on your own TV. Bake-11 S0 words (low half = even column 2L, high half = odd 2L+1). Copy to <work>/s0svc/plan.json; deploy.sh replaces \"lanes\".",
+ "lanes": {
+  "627": "0x408A40CA",
+  "628": "0x32E03055",
+  "629": "0x339A2CB4",
+  "630": "0x40CA3904"
+ },
+ "floor_below_ref": 150,
+ "helper_sha256": {
+  "TconDump.dll": "run tcon/pin_helper.py to pin your own build",
+  "TconDump.runtimeconfig.json": "run tcon/pin_helper.py to pin your own build",
+  "TconDump.deps.json": "run tcon/pin_helper.py to pin your own build"
+ }
+}

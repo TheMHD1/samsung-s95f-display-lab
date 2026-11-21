@@ -1,0 +1,23 @@
+# Power-on runtime service (reference implementation, ADAPT BEFORE USE; tcon/RT-SPEC.md). Install: services/install_unit.sh s95f-rt
+[Unit]
+Description=TCON power-on runtime gains (S1 lanes 627-630 + blue weight), re-applied after each controller boot
+StartLimitIntervalSec=3600
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment=TCON_KIT_CONFIG=@CONFIG@
+WorkingDirectory=@RTSVC@
+ExecStart=/usr/bin/python3 -B @KIT@/services/s95f-rt/rt_service.py --live
+# Remove the watcher pause only if rt_tool created it (marker + same mtime) and no rt_tool is running, e.g. after a SIGKILL.
+ExecStopPost=/usr/bin/python3 -B @KIT@/tcon/rt_tool.py --clear-own-pause
+# SIGTERM goes to the service only; it lets a running rt_tool call finish (rt_tool <= 480 s, service cap 540 + 60 s).
+KillMode=mixed
+TimeoutStopSec=660
+SuccessExitStatus=143 129
+Restart=on-failure
+RestartSec=60
+UMask=0077
+
+[Install]
+WantedBy=default.target

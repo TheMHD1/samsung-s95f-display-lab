@@ -1,0 +1,6 @@
+work/
+config.json
+__pycache__/
+*.pyc
+tcon/helpers/*/bin/
+tcon/helpers/*/obj/

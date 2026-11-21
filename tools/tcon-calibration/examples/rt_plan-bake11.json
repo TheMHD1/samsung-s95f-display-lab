@@ -1,0 +1,27 @@
+{
+ "note": "WORKED EXAMPLE: S95F 77-inch, this firmware only; verify on your own TV. Runtime S1 lanes 627..630 [STOCK, NEW] (stock = the stored words the helper hard-codes) and blue weight pair (stock 205, bound 205..820); R/G stay 205. Copy to <work>/rtsvc/rt_plan.json (and rt_plan-bake11.json for the guard), then pin the runtime helper.",
+ "s1": {
+  "627": [
+   "0x40AA40AE",
+   "0x3A333A36"
+  ],
+  "628": [
+   "0x40A340A6",
+   "0x2B4E2B50"
+  ],
+  "629": [
+   "0x409B409F",
+   "0x26C326C6"
+  ],
+  "630": [
+   "0x40944098",
+   "0x325F3262"
+  ]
+ },
+ "blue": 820,
+ "helper_sha256": {
+  "TconDump.dll": "run tcon/pin_helper.py to pin your own build",
+  "TconDump.runtimeconfig.json": "run tcon/pin_helper.py to pin your own build",
+  "TconDump.deps.json": "run tcon/pin_helper.py to pin your own build"
+ }
+}
