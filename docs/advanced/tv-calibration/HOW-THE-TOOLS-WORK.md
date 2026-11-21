@@ -39,6 +39,7 @@ headers and reads the replies. It ships as source only, in three builds, and eac
 | `scan-arm` | Waits for the TV's scan and sets the scan gain at the right moment | Same bounds as above |
 | `runtime` | Runtime trims after each controller boot | Four runtime gain words and the colour weight pairs, at fixed addresses, within fixed limits |
 | `lane-mask-read` / `lane-mask-write` / `lane-mask-firstscan` (separate programs, same approach) | The blackout fix: read the lane table, set the skip flags, and set them during the first scan after power-on | Only bit 0 of the 122 lane-table entries for lanes 540–661, only on a healthy controller |
+| `tcon-power-cycle` (optional) | Recovery of an already-faulted controller | Nothing in controller memory: one fixed request to the TV's own driver for its normal controller off-then-on sequence |
 
 Every write goes through the same five steps:
 
@@ -88,7 +89,7 @@ RAM clears whenever the controller powers down, so a few small services re-apply
 
 | Service | Keeps | How |
 | --- | --- | --- |
-| [Lane-mask watcher](../../../tools/tcon-calibration/services/lane-mask-watcher/README.md) | The blackout fix | Notices each controller boot, waits until it is healthy, sets the 122 lane skip flags and reads them back ([background](../BLACKOUT-MITIGATION.md#watcher-recovery-and-source-coordination)) |
+| [Lane-mask watcher](../../../tools/tcon-calibration/services/lane-mask-watcher/README.md) | The blackout fix | Notices each controller boot, waits until it is healthy, sets the 122 lane skip flags and reads them back. If the controller has already faulted, it can (optionally) switch the TV to its Apps home and request one stock controller power cycle, within strict budgets ([background](../BLACKOUT-MITIGATION.md#watcher-recovery-and-source-coordination)) |
 | `s0-nightly` | The line fix | Arms every qualifying standby scan with the calibration gains, then audits the stored result |
 | `s95f-rt` | The runtime trims | Re-applies them within a minute or two of each controller boot |
 | `bake11-guard` | The stored calibration | Checks it at every boot and twice a day; if it is gone, turns the trims off and repeats the calibration run in a quiet window |

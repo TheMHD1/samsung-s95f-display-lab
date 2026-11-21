@@ -21,12 +21,14 @@ addresses and controller states are this panel's; verify them on your TV read-on
 | `../../tcon/helpers/lane-mask-read/` | C# helper: reads the status block, context and the 122-entry window; classifies the controller (no writes) |
 | `../../tcon/helpers/lane-mask-write/` | C# helper: writes the skip bits on a Clean, settled controller; exact read-back |
 | `../../tcon/helpers/lane-mask-firstscan/` | C# helper: same flags during the first scan after power-on; ignores the six free-running scan-counter bytes when comparing two reads |
+| `recovery/`, `test_recovery.py` | Optional recovery tools for an already-faulted controller (below) and their offline tests |
 
 ## Build the helpers
 
-Same recipe as [GUIDE §3](../../GUIDE.md#3-build-the-helpers-source-only-no-binaries-ship), for the three folders
-`lane-mask-read`, `lane-mask-write`, `lane-mask-firstscan` (output to `<folder>/bin`). Each has built-in self-tests
-that need no TV:
+Same recipe as [GUIDE §3](../../GUIDE.md#3-build-the-helpers-source-only-no-binaries-ship), for the folders
+`lane-mask-read`, `lane-mask-write`, `lane-mask-firstscan` and, for the optional recovery, `tcon-power-cycle` (output to
+`<folder>/bin`). The power-cycle helper refuses to run anywhere but the TV's 32-bit ARM (`REFUSED_ARCH_ABI`). The lane-mask helpers have built-in
+self-tests that need no TV:
 
 ```sh
 dotnet lane-mask-read/bin/LaneMaskRead.dll --self-test                 # selfTestsPassed 662
@@ -49,18 +51,33 @@ dotnet lane-mask-firstscan/bin/LaneMaskWrite.dll --startup-mask-self-test
 
 ## Recovery of a faulted controller (optional, off by default)
 
-On the S95F, a controller that had already faulted was brought back with two more tools: one that puts the TV on its
-own Apps home screen (a clean picture state) and one stock controller power-cycle. They are not part of this kit. The
-watcher calls them only if you configure them:
+A controller that has already faulted (picture off) needs more than the mask. On the S95F two steps brought it back,
+and both are included as optional tools in `recovery/`:
 
-| Key | Contract |
-| --- | --- |
-| `apps_cmd` | argv list. Called with `--boot <boot_id> --output <dir>` (plus `--check` for a 0-key check). Must print JSON with `ok` (true when the TV is verified on its Apps home) and `keys` (list of keys sent) |
-| `mode2_cmd` | argv list. Called with `--output <file>`. Exit code 0 = the controller power-cycle completed |
+| Tool | What it does | Watcher key |
+| --- | --- | --- |
+| `recovery/tv_apps_home.py` | Puts the TV on its own **Apps home screen** with stock key presses (one Home, then at most 8 Right/Up along observed paths), checking after every key that the home screen still has focus. On the S95F, a faulted controller on the media-player HDMI input kept resetting until the TV showed its own Apps screen. `--check` only looks (0 keys). | `apps_cmd` |
+| `recovery/tcon_power_cycle.py` + `tcon/helpers/tcon-power-cycle/` | **One stock controller power cycle**: the helper sends the TV driver's own normal off-then-on request (`/dev/tztv_tcon`, ioctl `0xc010749f`, payload 41, 2, 0, 0). No arguments, no retries, no flash. Dry unless `--run`. | `mode2_cmd` |
 
-Without them the watcher **withholds recovery and alerts**; it never improvises. Budgets when configured: at most 3
-power-cycles per rolling hour and 6 per day, spaced 0 / 90 / 600 s, and an owner acknowledgement (`budget_ack` file) once
-the budget is used up.
+Turn them on in `<watcher.dir>/watcher.json` (replace `<kit>` with the kit folder):
+
+```json
+{
+  "apps_cmd": ["python3", "-B", "<kit>/services/lane-mask-watcher/recovery/tv_apps_home.py"],
+  "mode2_cmd": ["python3", "-B", "<kit>/services/lane-mask-watcher/recovery/tcon_power_cycle.py", "--run"]
+}
+```
+
+Try each by hand first, with the TV on and the watcher paused: `tv_apps_home.py --boot <boot_id> --output /tmp/apps-1
+--check` (looks only), then without `--check`; `tcon_power_cycle.py` (dry plan), then once with
+`--run --output /tmp/pc-1.json` while you watch the screen. A zero return from the driver is not proof of recovery; the
+watcher decides from its next controller read.
+
+Without them the watcher **withholds recovery and alerts**; it never improvises. Order when configured: Apps home
+first (and a 0-key check right before the power cycle), then the power cycle. Budgets: at most 3 power cycles per
+rolling hour and 6 per day, spaced 0 / 90 / 600 s, and an owner acknowledgement (`budget_ack` file) once the budget is
+used up. Both tools are S95F / Tizen specific (home UI `com.samsung.tv.csfs`, tab names, the driver request): verify on
+your TV. `TV_INPUT_KEYEVENT_SHA256` can pin the TV's key tool by hash.
 
 ## Safety
 

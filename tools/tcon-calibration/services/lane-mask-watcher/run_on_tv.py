@@ -42,8 +42,12 @@ def main():
     # persistent stage: fixed 32-hex name derived from the helper files' hashes (survives until TV reboot)
     digest = hashlib.sha256(b''.join(hashlib.sha256(f.read_bytes()).digest() for f in files)).hexdigest()[:32]
     stage = prefix + (digest if persist else uuid.uuid4().hex)
-    ident = must('cat /proc/sys/kernel/random/boot_id; cat /sys/bus/usb/devices/7-1/devnum').split()
+    # devnum = the controller's USB device number; 'none' when the controller is not on USB (a helper that needs
+    # {DEVNUM} is then refused before anything is staged)
+    ident = must('cat /proc/sys/kernel/random/boot_id; cat /sys/bus/usb/devices/7-1/devnum 2>/dev/null || echo none').split()
     boot, devnum = ident[0], ident[1]
+    if devnum == 'none' and any('{DEVNUM}' in a for a in helper_args):
+        raise SystemExit('controller USB device not present; helper needs {DEVNUM}')
     (out_dir / 'identity.json').write_text(json.dumps({'boot': boot, 'devnum': devnum, 'stage': stage}))
     want = {f.name: hashlib.sha256(f.read_bytes()).hexdigest() for f in files}
     have = {}

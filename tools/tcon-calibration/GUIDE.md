@@ -119,14 +119,15 @@ docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e DOTNET_CLI_TELEMETRY_OP
   -v $PWD/read-poke:/w -v ~/.cache/tcon-nuget:/cache mcr.microsoft.com/dotnet/sdk:10.0 \
   dotnet restore /w/TconDump.csproj --source https://api.nuget.org/v3/index.json
 # every build, offline from the cache
-for h in read-poke scan-arm runtime lane-mask-read lane-mask-write lane-mask-firstscan; do
+for h in read-poke scan-arm runtime lane-mask-read lane-mask-write lane-mask-firstscan tcon-power-cycle; do
   docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e DOTNET_CLI_TELEMETRY_OPTOUT=1 -e NUGET_PACKAGES=/cache \
     -v $PWD/$h:/w -v ~/.cache/tcon-nuget:/cache mcr.microsoft.com/dotnet/sdk:10.0 \
-    dotnet build /w/TconDump.csproj -c Release -o /w/bin
+    dotnet build /w -c Release -o /w/bin      # each folder holds exactly one project
 done
 ```
 
-Each `bin/` must contain `TconDump.dll`, `TconDump.runtimeconfig.json` and `TconDump.deps.json`. Read the source before
+Each calibration `bin/` must contain `TconDump.dll`, `TconDump.runtimeconfig.json` and `TconDump.deps.json`
+(the blackout helpers build `LaneMaskRead`/`LaneMaskWrite`, the optional recovery helper `TconPowerCycleOnce`). Read the source before
 you run it. The bounds are in `CheckAddr`, `CheckVal`, `CheckPoke`, `Clean` and (runtime) `RtParse`.
 
 The services refuse an unpinned helper. Pin your build (after review) whenever you rebuild:

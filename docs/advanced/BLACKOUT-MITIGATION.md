@@ -59,6 +59,8 @@ The watcher records the attempt **before** calling recovery. It permits one atte
 
 The watcher and line-fix keeper share an access lock and retry lock contention. A `watcher.pause` file stops watcher actions; a busy flag participates in coordination. Manual controller work must use the same pause/ownership/reconciliation contract. Removing the pause without reconciling actual device/transport state is insufficient after an ambiguous operation. Never run an independent flasher against the same USB interface while this watcher can mutate or reset it.
 
+Code: [lane-mask watcher, helpers and optional recovery tools](../../tools/tcon-calibration/services/lane-mask-watcher/README.md).
+
 ## Earlier experiments and remaining limits
 
 Raising a global controller limit from 40 to 200 helped in an earlier experiment. The temporary `s95f-temporary-limit200.service` was subsequently stopped/disabled and superseded by the lane mask. A recovery path selecting Apps before one stock MODE2 call was also tested. Apps-only home modifications were an early workaround, not the final controller mitigation.
@@ -81,4 +83,4 @@ The mask does not repair damaged conductors, restore lost emission, fix optical 
 | `tcon-research/rt-protect-host-recovery.md` | RT Protect status versus ERR-GPIO monitor boundary |
 | `RECOVER-PANEL.md` and earlier recovery helper | Historical procedure; old boot pins require requalification |
 
-Source hashes are in the [sanitized manifest](../../research/panel/sources.json); absolute locations and private runtime dependencies are in the local handoff. Public documentation includes the mechanism and exact evidence, not a generic live bypass installer. Owner-specific credentials, device identities, service units and raw receipts remain private. No service or TV setting was changed during this documentation update.
+Source hashes are in the [sanitized manifest](../../research/panel/sources.json). The watcher, its three C# helpers, the optional recovery tools (Apps home, one stock controller power cycle) and a service template are published as a **reference implementation** in [services/lane-mask-watcher](../../tools/tcon-calibration/services/lane-mask-watcher/README.md): it runs through your own TV shell and must be verified on your TV before use. Owner-specific credentials, device identities, root access and raw receipts remain private. No service or TV setting was changed during this documentation update.
