@@ -22,6 +22,10 @@ the guide does not cover.
 **Line:** [short explanation ↓](#problem-2-the-dark-line-in-short) · [deep dive](docs/advanced/tv-calibration/WRITEUP.md) ·
 [Results](#results) · [Do it yourself](tools/tcon-calibration/GUIDE.md) · [Safety](SAFETY.md)
 
+| Before | After the fix |
+| :---: | :---: |
+| <img src="docs/assets/line-before-content-1.jpg" width="330" alt="Dark vertical line through real content above the impact mark"> | <img src="docs/assets/after-dark-scene.jpg" width="250" alt="Dark scene after the fix: no line"> |
+
 ## The TV, in one picture
 
 <img src="docs/assets/explain-tv-modules.png" width="760" alt="Our server sends commands to the TV main board, which talks to the panel controller over an internal link; the controller's RAM holds the scan gain, runtime trims and lane skip flags we change; its flash holds the stored compensation; the panel has 3,840 columns, one lane per two columns">
@@ -77,10 +81,6 @@ flash by us; the TV's own scan and save keep the line compensation.
 | **Blackouts** | Picture off and controller reset about every 50 s on the worst days; TV unusable | 24 of 24 controller boots clean; no blackouts |
 | **Line at 20 % grey** (worst columns) | ~1 % of normal light | +3 % (band mean; columns +1 to +6 %) |
 | **Line from 30 % to 100 % grey** | 1–67 % of normal light; black below 20 % | Within 1–2 % of healthy neighbours |
-
-| Before | After the fix |
-| :---: | :---: |
-| <img src="docs/assets/line-before-content-1.jpg" width="330" alt="Dark vertical line through real content above the impact mark"> | <img src="docs/assets/after-dark-scene.jpg" width="250" alt="Dark scene after the fix: no line"> |
 
 <img src="docs/assets/line-before-after-chart.png" width="720" alt="Band brightness vs healthy neighbours by grey level, before and after the fix">
 
