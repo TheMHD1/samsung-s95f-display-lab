@@ -63,6 +63,8 @@ Root acquisition and UEP/unsigned-execution policy are separate mechanisms. Do n
 
 ## Reproduction entry points
 
+For the packaged rooting commands, start with the [S95F rooting toolkit](https://github.com/TheMHD1/samsung-s95f-root-and-firmware) and its [root setup guide](https://github.com/TheMHD1/samsung-s95f-root-and-firmware/blob/main/docs/QUICKSTART.md). [Verify real and effective UID 0](https://github.com/TheMHD1/samsung-s95f-root-and-firmware/blob/main/docs/VERIFY-ROOT.md) through the same connection the Display Lab scripts will use. Root access is the prerequisite for the TV-side fixes; firmware decryption is not required.
+
 Obtain Tizen Studio/SDB and build or install the upstream public tool according to its own [README](https://github.com/chris-ritsen/samsung-tv-root#readme). Keep its source/payload revision together. The public CLI provides:
 
 ```sh

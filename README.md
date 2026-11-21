@@ -17,7 +17,7 @@ scan then sees them as weak, and the TV compensates them and saves that itself. 
 band is within **1–2 % of its neighbours from 30 % grey up**. Very dark greys are still slightly yellow. We never write
 the controller's flash ourselves, and the physical damage remains.
 
-**Prerequisite for both TV-side fixes.** You need an existing root shell on your own TV. [Verify TV root access and read the research notes](https://github.com/TheMHD1/samsung-s95f-root-access).
+**Prerequisite for both TV-side fixes: root access on your own TV.** Use the [S95F rooting toolkit](https://github.com/TheMHD1/samsung-s95f-root-and-firmware) and its [root setup guide](https://github.com/TheMHD1/samsung-s95f-root-and-firmware/blob/main/docs/QUICKSTART.md), then [verify the root shell](https://github.com/TheMHD1/samsung-s95f-root-and-firmware/blob/main/docs/VERIFY-ROOT.md) through the connection your scripts will use. Firmware decryption is not required for either fix.
 
 **Blackouts:** [short explanation ↓](#problem-1-the-blackouts-in-short) · [deep dive](docs/advanced/BLACKOUT-MITIGATION.md) ·
 **Line:** [short explanation ↓](#problem-2-the-dark-line-in-short) · [deep dive](docs/advanced/tv-calibration/WRITEUP.md) ·

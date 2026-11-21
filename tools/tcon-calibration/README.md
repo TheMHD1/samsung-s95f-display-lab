@@ -6,8 +6,9 @@ stores a compensation that drives those columns properly, and the TV saves it it
 top. The method and results are in the [write-up](../../docs/advanced/tv-calibration/WRITEUP.md). The step-by-step is in
 **[GUIDE.md](GUIDE.md)**.
 
-**Prerequisite, not provided:** a working root shell on your own TV ([GUIDE §1](GUIDE.md#1-prerequisites)). The kit
-does not obtain, explain or link root access.
+**Prerequisite: a working root shell on your own TV** ([GUIDE §1](GUIDE.md#1-prerequisites)). Set it up with the
+[S95F rooting toolkit](https://github.com/TheMHD1/samsung-s95f-root-and-firmware) and its [root setup guide](https://github.com/TheMHD1/samsung-s95f-root-and-firmware/blob/main/docs/QUICKSTART.md),
+then [verify your TV session](https://github.com/TheMHD1/samsung-s95f-root-and-firmware/blob/main/docs/VERIFY-ROOT.md). Firmware decryption is not required.
 
 **Applies only** when the damaged columns' stored sensing result reads far too high
 ([GUIDE §0](GUIDE.md#0-does-this-method-apply-to-your-panel), [§7](GUIDE.md#7-diagnose-does-the-stored-reading-of-the-damaged-columns-read-high)).
