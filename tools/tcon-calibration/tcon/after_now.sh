@@ -1,5 +1,5 @@
 #!/bin/bash
-# After an on-demand bake (Claude 2026-11-19): wait for watcher MASKED after the TV is back on (only if a blackout watcher is
+# After an on-demand bake (Claude): wait for watcher MASKED after the TV is back on (only if a blackout watcher is
 # configured), read stored D4 + live C1, evaluate against the previous bake, photograph vs the previous photo set, blank the
 # player. Paths come from config.py (work_dir); the previous tag needs captures d4-PREV, c1-ddr-PREV and optical/post-PREV
 # (make them with the baseline step in GUIDE.md before the first bake).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""On-demand S0 bake via the TV's own Screen Optimization off-sensing (Claude 2026-11-19, v2 after final-reviewer).
+"""On-demand S0 bake via the TV's own Screen Optimization off-sensing (Claude, v2 after final-reviewer).
 deviced RequestOffSensing(int32 0) = the stock Screen Optimization "Start Now" call (userscan/REPORT-full.md): TV on ->
 standby with display off -> mode-3 QFS scan -> TV turns itself back on (reboot type 2).
 TV-side waiter: after the TV reports standby, every helper run first waits for the controller (USB 7-1) to power OFF and
@@ -10,7 +10,7 @@ Usage: bake_now.py POKES [--dry]   (--dry = stage + start monitors only; no requ
 import base64, os, pathlib, re, secrets, signal, subprocess, sys, time
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent)); import config as C; C.ensure_dirs(); LOG = C.WORK / 'bake_now.log'
-# CONSULT-20A §3 (2026-11-20): on-demand runs only inside config tv.bake_window (S95F: 10:30..01:15 TV local, after 2 dark
+# CONSULT-20A §3: on-demand runs only inside config tv.bake_window (S95F: 10:30..01:15 TV local, after 2 dark
 # QFS returns at 02:03 / 02:53 local). Keep a window that is proven on YOUR TV.
 def _in_window():
     return C.in_bake_window()

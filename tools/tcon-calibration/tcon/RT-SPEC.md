@@ -1,4 +1,4 @@
-# RT-SPEC: power-on runtime service (Claude 2026-11-19, from design note CONSULT-14 §5–§6)
+# RT-SPEC: power-on runtime service (Claude, from design note CONSULT-14 §5–§6)
 
 > Public kit note: this is the original build spec, kept for the reasoning. Paths now come from `config.py`:
 > `rtsvc/` = `<work>/rtsvc/` (state) with the code in `tcon/rt_tool.py` and `services/s95f-rt/`; `TconDump-rt/` =

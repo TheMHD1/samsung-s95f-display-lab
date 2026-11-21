@@ -54,7 +54,7 @@ You need all of these before step 2. This kit provides none of the access.
    decoding), `ffmpeg` (clips), `docker` (helper build) and `systemd --user` (services).
 7. Your TV's **TCON package** file (`F_RSM1_*_COMMON.bin` on the S95F) from its own firmware. The backup tool only reads
    its storage map. Firmware images are not part of this kit.
-8. **Firmware auto-update OFF** on the TV. An update can remove the access, the bake and everything else.
+8. **Firmware auto-update OFF** on the TV. An update can remove the access, the calibration and everything else.
 
 ---
 
@@ -72,7 +72,7 @@ You need all of these before step 2. This kit provides none of the access.
    | `tv.shell` | argv template that runs `{cmd}` as root on the TV and returns its stdout and exit code. Without `{cmd}` the command goes to stdin. |
    | `tv.forward` / `tv.forward_remove` | Optional `{port}` forward for faster dump fetches. Default: base64 over `tv.shell`. |
    | `tv.timezone` | The TV's local time: an IANA zone name or a fixed offset like `+01:00`. `null` = this computer's zone. |
-   | `tv.bake_window` | On-demand bakes are allowed only inside this TV-local window. *S95F example:* `10:30`–`01:15` (see 14.1). |
+   | `tv.bake_window` | On-demand calibration runs (one TV scan with your gains set; §9) are allowed only inside this TV-local window. *S95F example:* `10:30`–`01:15` (see 14.1). |
    | `tv.key_cmd` | Optional `{key}` remote-key command, used only to dismiss the TV screensaver before photos. |
    | `tv.player_input` | TV source name of the player's input (*S95F example:* `SOURCE_TYPE_HDMI3`). |
    | `watcher.enabled` / `watcher.dir` | Only if you run an external blackout lane-mask watcher that uses the same pause/state files. Default off. |
@@ -147,12 +147,12 @@ Every tool enforces these rules. Do not weaken them:
    8000 below stock. Blue weight 205–820. At most 8000 counts per poke step. Small steps near neutral.
 5. **Stop on any non-Clean controller state.** The helpers check the status block (*S95F example:* `0x47012400`) before
    and during every claim. Clean = stop 0, fault 0, gate 1, limit 40 (gate may read 0 during off-sensing).
-6. **On-demand bakes only inside `tv.bake_window`**, only on a boot that looks healthy, with exactly one reboot as the
+6. **On-demand calibration runs only inside `tv.bake_window`**, only on a boot that looks healthy, with exactly one reboot as the
    dark-screen remedy, then stop (14.1).
 7. **No static test pictures on the OLED.** The tools blank the player after every batch. Keep batches short (≤ 10 min).
 8. **Never run a live-capable command "to test argument parsing".** Use the offline tests. Have every change to a tool
    reviewed by someone else before it touches the TV.
-9. **One variable per bake.** Predict each result first, then compare with the prediction before the next step.
+9. **One variable per calibration run.** Predict each result first, then compare with the prediction before the next step.
 
 Backup (read-only, 19 storage items, resumable, writes `<work>/backup/` + `MANIFEST.json` with sha256):
 
@@ -239,9 +239,9 @@ newer bank is the one in use.
 
 ---
 
-## 8. Baseline before the first bake
+## 8. Baseline before the first calibration run
 
-`after_now.sh TAG PREV` compares a bake with the captures of the previous tag: `d4-PREV`, `c1-ddr-PREV` and the photo set
+`after_now.sh TAG PREV` compares a calibration run with the captures of the previous tag: `d4-PREV`, `c1-ddr-PREV` and the photo set
 `post-PREV`. Make the baseline set `base` now, with the TV on and showing the player:
 
 ```sh
@@ -259,9 +259,9 @@ also had a `split32` clip that `mkclip.py` cannot make: `--split32` is opt-in).
 
 ---
 
-## 9. First bake
+## 9. First calibration run
 
-A "bake" sets the S0 sensing gain in controller RAM at the moment the TV's own power-off scan starts. The scan then stores
+A "calibration run" sets the S0 sensing gain in controller RAM at the moment the TV's own power-off scan starts. The scan then stores
 its result, and the TV saves it to flash itself. The kit uses the TV's own on-demand scan (*Screen Optimization*, "Start
 Now"; TV off for about 12 minutes, then back on by itself).
 
@@ -272,7 +272,7 @@ Now"; TV off for about 12 minutes, then back on by itself).
    python3 -B offline/s0words.py s0 628=0.80 629=0.80
    ```
    It prints the `pokes` string `ADDR:OLD:NEW,...` and refuses anything outside the tools' bounds.
-3. Bake, then evaluate:
+3. Calibration run, then evaluate:
    ```sh
    python3 -B tcon/bake_now.py <pokes>          # --dry first: stages and starts the TV-side monitors only, no request
    bash tcon/after_now.sh bake1 base
@@ -282,32 +282,32 @@ Now"; TV off for about 12 minutes, then back on by itself).
    power-cycles, nothing is written. `after_now.sh` then reads D4 and C1, runs `bake_eval.py`
    (`<work>/captures/eval-bake1.txt`) and photographs (`<work>/after_bake1.log`).
 4. What to expect. A small first step can store a lower reading and change **nothing** on screen, because the reading is
-   still above neutral (our ×0.85 bake). That is not a failure. Our ×0.80 bake closed about 75 % of the red/green gap.
+   still above neutral (our ×0.85 calibration run). That is not a failure. Our ×0.80 calibration run closed about 75 % of the red/green gap.
 5. **Rollback is always one unarmed scan away**: any scan that runs without the kit stores the stock result again.
 
 ---
 
 ## 10. Iterate per column
 
-1. Change one or two lanes per bake, in steps of ≤ 0.05 of gain near the point where the light starts to respond.
-   Overshoot is strongly non-linear: our bake 5 made two columns glow 11–29× too bright near black.
-2. **Look at near-black (grey 13 and 26) after every bake**, not only at mid grey. Overshoot shows at 2–5 % grey first.
+1. Change one or two lanes per calibration run, in steps of ≤ 0.05 of gain near the point where the light starts to respond.
+   Overshoot is strongly non-linear: our run 5 made two columns glow 11–29× too bright near black.
+2. **Look at near-black (grey 13 and 26) after every calibration run**, not only at mid grey. Overshoot shows at 2–5 % grey first.
 3. Use per-column halves once lanes respond: `s0words.py s0 628=0x3055,0x32E0` (even, odd). The tools allow unequal halves
    only on band lanes 626–632 (*S95F example*; edit `bake_now.py` and `s0_nightly.py` for your band, with review).
 4. Model the firmware's **vertical-line repair**. After the scan, a stored column that differs from both neighbours by
    more than about 40–45 counts is replaced by the mean of the three largest of its four nearest neighbours. Columns in a
    damaged band therefore inherit their neighbours' readings, and lanes couple. Without this, per-lane results make no
    sense.
-5. A repeat bake of the same words reproduces the stored result to about one count (our bake 6). Use that to separate
+5. A repeat calibration run of the same words reproduces the stored result to about one count (our run 6). Use that to separate
    drift from effect.
-6. Keep a log per bake: words, prediction, stored result, photos. `tcon/check_bake11.py` shows how we checked our final
-   bake against its prediction. Its expected values are *S95F example* only.
+6. Keep a log per calibration run: words, prediction, stored result, photos. `tcon/check_bake11.py` shows how we checked our final
+   calibration run against its prediction. Its expected values are *S95F example* only.
 
 ---
 
 ## 11. Runtime trims (S1) and the blue weight
 
-After the bakes, two RAM-only settings act on top. Both clear at every controller boot:
+After the calibration runs, two RAM-only settings act on top. Both clear at every controller boot:
 
 - **S1 runtime gain** per lane (used by the real-time correction loop while the TV is on): acts like a brightness gain on
   the band, about +5–6 % light per −25 % gain, equal in R/G/B.
@@ -339,15 +339,15 @@ After the bakes, two RAM-only settings act on top. Both clear at every controlle
    python3 -B tcon/rt_tool.py restore    # back to stock at any time
    ```
 3. Photograph after each change (step 6.4, or `postbake.py`). Fit S1 for bright greys and blue for colour balance. Then
-   re-tune the bake if low greys are over-driven (our bake 11).
+   re-tune the scan-time gain if low greys are over-driven (our final calibration).
 
 ---
 
 ## 12. Automation (reference implementations: adapt before use)
 
-The bake lasts until the next scan without the kit. The trims last until the next controller boot. Three services keep
+The stored calibration lasts until the next scan without the kit. The trims last until the next controller boot. Three services keep
 both in place. They are the code that ran on our TV, with the private parts moved to `config.py`. They carry our
-thresholds, lanes and bake-11 words. Read each one, adapt it, and run its offline tests (`pytest -q services/...`)
+thresholds, lanes and final calibration words. Read each one, adapt it, and run its offline tests (`pytest -q services/...`)
 before you enable it.
 
 1. **Night service** `services/s0-nightly/` arms the S0 words for every standby scan that the TV announces ("off sensing
@@ -359,7 +359,7 @@ before you enable it.
    python3 -B tcon/pin_helper.py scan-arm <work>/s0svc/plan.json
    bash services/s0-nightly/deploy.sh 627=0x408A40CA,628=0x32E03055,629=0x339A2CB4,630=0x40CA3904 d4-bake11
    ```
-   The reference capture (here `d4-bake11`) must be the D4 of an on-demand bake with exactly these words.
+   The reference capture (here `d4-bake11`) must be the D4 of an on-demand calibration run with exactly these words.
 2. **Runtime service** `services/s95f-rt/` re-applies the plan after each new controller boot (at most 3 applies per
    boot, audits at +90 s, +10 min, then every 30 min). It never runs a helper unless the TV reports `lcdon` and the
    controller is present.
@@ -367,8 +367,8 @@ before you enable it.
    bash services/install_unit.sh s95f-rt && systemctl --user enable --now s95f-rt
    touch <work>/rtsvc/rt.disable          # kill switch (the service idles while it exists)
    ```
-3. **Guard** `services/bake11-guard/` reads the stored bake at each controller boot and every 12 h. If the bake is gone,
-   it switches the trims off at once, re-bakes at a quiet moment inside the window (at most twice per 24 h), and stops
+3. **Guard** `services/bake11-guard/` reads the stored calibration at each controller boot and every 12 h. If it is gone,
+   it switches the trims off at once, repeats the calibration run at a quiet moment inside the window (at most twice per 24 h), and stops
    after two failures. Adapt `WORDS`, `POKES`, `REF`, `BAND` and the signatures in `compare()` in `restore_bake11.py`, and
    copy your plan to `<work>/rtsvc/rt_plan-bake11.json`. Its "quiet" test needs Kodi and `tv.player_input`. The `--l2`
    and `--probe` research modes are not part of this kit and are refused.
@@ -394,12 +394,12 @@ Calibration photos are not the finish line:
 
 ## 14. Recovery
 
-1. **Dark screen after an on-demand bake** (TV reports `lcdon`, the controller USB device is absent, the kernel log repeats
+1. **Dark screen after an on-demand calibration run** (TV reports `lcdon`, the controller USB device is absent, the kernel log repeats
    `tcon power(0)`). Twice on our TV, both when the restart after the scan fell after 02:00 TV local, hence the window.
    Run **one** root `reboot` of the TV. If it is still dark, unplug the TV at the wall for 10 s. Do not try other
    remedies. `restore_bake11.py` does the single reboot automatically, saves read-only diagnostics and then stops.
-2. **Lost bake** (a scan ran without the kit, a menu Screen Optimization, a computer outage): switch the trims off
-   (`touch <work>/rtsvc/rt.disable; python3 -B tcon/rt_tool.py restore`), then bake your words again (step 9) or let the
+2. **Lost calibration** (a scan ran without the kit, a menu Screen Optimization, a computer outage): switch the trims off
+   (`touch <work>/rtsvc/rt.disable; python3 -B tcon/rt_tool.py restore`), then repeat the calibration run with your words (step 9) or let the
    guard do it.
 3. **Undo everything**: stop the services, `python3 -B tcon/rt_tool.py restore`, then let one standby scan run unarmed or
    start Screen Optimization from the menu. The stock result is stored again. A power cycle clears all RAM settings.
@@ -443,7 +443,7 @@ Not used, for reference: `0x58698800` is a third gain array, and the mode-3 offs
 | D4 plane 1920×2160 pitch 2880, healthy columns 1200–1250, report columns | `tcon/d4store.py`, `tcon/bake_eval.py`, `tcon/rowaudit.py` |
 | Live C1 in DDR `0x755B8000 + n×0x388400` | `tcon/after_now.sh`, `services/s0-nightly/s0_nightly.py` |
 | Audit tolerances and band | `services/s0-nightly/morning_audit.py` (`SKIP`, `BAND`, `BAND_TOL`) |
-| Approved bake, expected deltas, signatures | `services/bake11-guard/restore_bake11.py`, `tcon/check_bake11.py` |
+| Approved calibration, expected deltas, signatures | `services/bake11-guard/restore_bake11.py`, `tcon/check_bake11.py` |
 | Test bar columns 1100–1419 | `measure/mkclip.py`, `camera.analysis` |
 | Pre-photo screen check (Tizen `buxton2ctl` source, `enlightenment_info` OSD dump, screensaver process) | `measure/screencheck.py` |
 | Power state / scan request (`deviced` D-Bus `GetPowerState`, `RequestOffSensing`), kernel log lines | `tcon/bake_now.py`, `tcon/rt_tool.py`, `services/*` |
@@ -457,7 +457,7 @@ Every change there changes a safety bound. Have it reviewed, and test offline be
 | Layer | Values |
 |---|---|
 | Damaged columns | 1255–1260 (lanes 627–630) |
-| S0 bake words | 627 `0x408A40CA`, 628 `0x32E03055`, 629 `0x339A2CB4`, 630 `0x40CA3904` (`examples/s0-plan-bake11.json`) |
+| S0 words of the final calibration | 627 `0x408A40CA`, 628 `0x32E03055`, 629 `0x339A2CB4`, 630 `0x40CA3904` (`examples/s0-plan-bake11.json`) |
 | S1 runtime words | 627 `0x3A333A36`, 628 `0x2B4E2B50`, 629 `0x26C326C6`, 630 `0x325F3262` (`examples/rt_plan-bake11.json`) |
 | Blue weight | 820 on `0x58602700` + `0x58622700` (R/G stay 205) |
 | Result (camera, band vs. panel) | luminance within 1–2 % from 30 % grey to white, +3 % at 20 %, +6 % at 10 %; blue short in dark greys |

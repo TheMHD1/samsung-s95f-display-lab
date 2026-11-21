@@ -1,5 +1,5 @@
 #!/bin/bash
-# Deploy the reviewed s0svc (Claude 2026-11-19, v3: any lanes, per-column words 0xHHHHLLLL). usage: deploy.sh LANE=WORD[,LANE=WORD...] REF_D4_CAPTURE
+# Deploy the reviewed s0svc (Claude, v3: any lanes, per-column words 0xHHHHLLLL). usage: deploy.sh LANE=WORD[,LANE=WORD...] REF_D4_CAPTURE
 # e.g. deploy.sh 628=0x3055,629=0x3055,630=0x3E96 d4-bake8
 #   REF = the D4 capture of the on-demand bake that used exactly these words (seeded as the audit reference).
 # Paths from config.py: state in <work>/s0svc (plan.json must exist with pinned helper_sha256: see GUIDE.md), captures in

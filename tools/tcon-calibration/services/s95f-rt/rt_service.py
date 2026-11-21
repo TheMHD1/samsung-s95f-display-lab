@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S95F power-on runtime service (Claude 2026-11-19; tcon/RT-SPEC.md §4, design note CONSULT-14 §5-§6).
+"""S95F power-on runtime service (Claude; tcon/RT-SPEC.md §4, design note CONSULT-14 §5-§6).
 The runtime S1 gains on lanes 627-630 and the blue weight are RAM-only and clear at each controller boot. Every 15 s:
 read the power state + controller boot identity (TV boot_id + USB devnum); once the TV is on, the watcher is MASKED >= 20 s
 and no other TV tool runs, call `rt_tool.py apply` (at most 3 apply calls per controller boot, >= 2 min apart), then

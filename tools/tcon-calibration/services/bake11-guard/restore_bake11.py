@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""restore_bake11.py (Claude 2026-11-20, v2 after review 1): keep / put back the owner-approved BAKE 11.
+"""restore_bake11.py (Claude, v2 after review 1): keep / put back the owner-approved BAKE 11.
 REFERENCE IMPLEMENTATION - ADAPT BEFORE USE: WORDS / POKES / REF / the column checks below are the S95F 77-inch values for
 one firmware (worked example); replace them with your own approved bake. Paths come from config.py (<work>/...).
 Approved state (S95F worked example):
@@ -138,7 +138,7 @@ def tv_on():
     import s0_nightly as N
     if N._root is None: N._root = N.tvdump_ns()['root']
     sb, up = N.state(); return (not sb) and up
-# ---- dark TCON after the QFS reboot (two incidents on 2026-11-20, FINDINGS / CONSULT-19) -------------------------
+# ---- dark TCON after the QFS reboot (two incidents, FINDINGS / CONSULT-19) -------------------------
 DARK_WAIT_S, DARK_BOOT_WAIT_S, DARK_POLL_S = 180, 420, 20   # CONSULT-20A: waiting does not help (latched); ~3 min
 DARK_WHY = 'TV dark after the bake (TCON unpowered) even after one reboot'
 WINDOW_WHY = f'no bake now (outside {C.window_text()} or marginal boot)'
@@ -177,7 +177,7 @@ def dark_probe(root):
     out = root(DARK_PROBE, 30); st = re.search(r'string "([^"]*)"', out)
     return (st.group(1) if st else 'unknown'), 'USB=1' in out, 'tcon power(0)' in out
 def dark_fix(root=None, clock=time.time, nap=time.sleep):
-    """After OUR on-demand bake only. Twice on 2026-11-20 the QFS reboot that ends a bake brought the TV back 'lcdon' with the TCON
+    """After OUR on-demand bake only. Twice the QFS reboot that ends a bake brought the TV back 'lcdon' with the TCON
     unpowered (USB 7-1 absent, kernel 'tcon power(0)' every 60 s, dark screen); CEC and the remote did nothing, a TV reboot fixed it.
     Wait up to DARK_WAIT_S for USB 7-1. Still lcdon + absent + 'tcon power(0)' -> ONE reboot over the root channel, then wait up
     to DARK_BOOT_WAIT_S. Never reboots in standby / unknown state. -> 'ok' | 'not-on' | 'rebooted-ok' | 'rebooted-still-dark'."""

@@ -19,9 +19,19 @@ These show the original defect at **different test levels and framing**. They ar
 
 Recovered from the saved `sony-setup/ready-preview.jpg` working directory. It is an early camera/setup preview, **not a verified final corrected result**. The exported preview has no camera-model EXIF; its Sony-session attribution comes from the saved project context. Exposure is left as saved, so this is deliberately not brightened for presentation.
 
-## Where are the after photos?
+## Photos of the TV-side fix (scan-time calibration)
 
-The retained Sony logs identify real original/fix sequences, including `g51-original` / `g51-fix` and `fin-orig51` / `fin-fix51`. The measurement helper defaulted to `keep=0`, deleting camera RAWs after analysis. A read-only check on 2026-10-30 found no image files remaining in that saved Sony measurement archive; the wider saved camera project contained only three setup previews.
+The before/after photos in the [README](../README.md#results) and the
+[write-up gallery](advanced/tv-calibration/WRITEUP.md#13-photos-and-tools) are the owner's phone photos of the real TV:
+`line-before-content-1.jpg`, `line-before-content-2.jpg`, `line-before-white.jpg` (before) and `after-dark-scene.jpg`,
+`after-impact-area.jpg`, `after-bright-scene.jpg`, `after-detail-scene.jpg`, `after-flat-field.jpg` (after the fix).
+They were scaled to 1200 px on the long side with the full frame kept and all metadata removed; no crop, retouch, exposure
+change or generative edit. Rainbow rings in some of them are camera moiré, not the panel. Measured numbers come from
+the RAW camera set in [RESULTS.md](advanced/tv-calibration/RESULTS.md), not from these photos.
+
+## Where are the after photos of the earlier player-side fix?
+
+The retained Sony logs identify real original/fix sequences, including `g51-original` / `g51-fix` and `fin-orig51` / `fin-fix51`. The measurement helper defaulted to `keep=0`, deleting camera RAWs after analysis. A read-only check found no image files remaining in that saved Sony measurement archive; the wider saved camera project contained only three setup previews.
 
 No confirmed distant after-shot or final matched before/after photograph was recovered from the inspected local and saved camera-project folders. This is a bounded search result, not a claim that the owner has no other photos. The after evidence published here is **saved numerical camera measurements**. A future visual pair needs the same pattern, camera/framing, locked exposure and recorded correction on/off state.
 

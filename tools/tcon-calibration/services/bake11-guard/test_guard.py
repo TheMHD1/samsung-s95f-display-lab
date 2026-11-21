@@ -201,7 +201,7 @@ def test_orphan_pause_only_inside_our_child_span(monkeypatch):
     R.SPANS[:] = [[0, time.time() - 1]]; R.clear_orphan_pause('t'); assert R.PAUSE.exists()   # made after our child ended
 def test_prune_by_tag(tmp_path, monkeypatch):
     cap = tmp_path / 'cap'; (cap / 'optical').mkdir(parents=True); monkeypatch.setattr(R, 'CAP', cap); monkeypatch.setattr(R, 'TOP', tmp_path); monkeypatch.setattr(R, 'LOGS', tmp_path)
-    tags = [f'bake11r2026112{d}T0300' for d in range(6)] + ['bake11r20261125T0300b']
+    tags = [f'bake11r2000010{d + 1}T0300' for d in range(6)] + ['bake11r20000106T0300b']
     for i, t in enumerate(tags):
         for d in (f'd4-pre-{t}', f'd4-{t}'): (cap / d).mkdir(); os.utime(cap / d, (i, i)) if d.startswith('d4-pre') else None
         for k in range(10): (cap / 'optical' / f'post-{t}-c{k}.npz').write_text('')
@@ -209,7 +209,7 @@ def test_prune_by_tag(tmp_path, monkeypatch):
     (cap / 'd4-bake11').mkdir()
     R.prune_tags(4)
     left = sorted(p.name[7:] for p in cap.glob('d4-pre-*')); assert left == sorted(tags[-4:])
-    assert len(list((cap / 'optical').glob('post-bake11r20261125T0300-*'))) == 10 and (cap / 'd4-bake11').exists()
+    assert len(list((cap / 'optical').glob('post-bake11r20000106T0300-*'))) == 10 and (cap / 'd4-bake11').exists()
     assert not list((cap / 'optical').glob(f'post-{tags[0]}*')) and not (tmp_path / f'after_{tags[0]}.log').exists()
 def test_preconditions(monkeypatch):
     monkeypatch.setattr(R, 'PLAN11', R.HERE / 'p11'); (R.HERE / 'p11').write_text('{}')          # public kit: no live plan /
@@ -402,7 +402,7 @@ def test_bake_window(monkeypatch):
     import datetime
     monkeypatch.setattr(R.C, 'TV_TZ', '+00:00'); monkeypatch.setattr(R.C, 'BAKE_WINDOW', ('10:30', '01:15'))
     tz = datetime.timezone.utc
-    def at(h, m): return datetime.datetime(2026, 11, 20, h, m, tzinfo=tz).timestamp()
+    def at(h, m): return datetime.datetime(2000, 1, 1, h, m, tzinfo=tz).timestamp()
     assert _IBW(at(10, 30)) and _IBW(at(23, 0)) and _IBW(at(1, 15)) and _IBW(at(0, 5))
     assert not _IBW(at(1, 16)) and not _IBW(at(2, 3)) and not _IBW(at(10, 29))
 def test_boot_healthy():

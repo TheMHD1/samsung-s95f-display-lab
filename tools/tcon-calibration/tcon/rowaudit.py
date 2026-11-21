@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Row-resolved stored-D4 audit (Claude 2026-11-20, CONSULT-18 §1/§5: whole-column medians hid a 74 % split).
+"""Row-resolved stored-D4 audit (Claude, CONSULT-18 §1/§5: whole-column medians hid a 74 % split).
 blocks(name) -> (3, 8, 3840) column medians of the stored (newest) bank per colour in 8 blocks of 270 rows (rows 0..2159).
 usage: python3 -B tcon/rowaudit.py NEW [OLD]   prints per block: blue-red (healthy-centred) on 1253..1262 and, with OLD, the
 centred change per colour on 1253..1262 and 1281 (reads capture files only)."""

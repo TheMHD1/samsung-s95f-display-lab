@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S95F nightly S0 sensing-gain trim, v3 (Claude 2026-11-19; after final-reviewer REVIEW-1 and the v2 review).
+"""S95F nightly S0 sensing-gain trim, v3 (Claude; after final-reviewer REVIEW-1 and the v2 review).
 At each TV standby with off-sensing due, arm the plan.json S0 trim so the stock power-off scan rebuilds D4/C1 for the
 damaged columns (bakes 2-5 today: core 0.14-0.35 -> ~0.85 of healthy). The trim only lasts until the next UNARMED scan,
 so every qualifying standby is armed. Built on the proven arm_wake.py flow + TconDump --armwait (helper-bin/ = TconDump

@@ -6,6 +6,8 @@ This is the research and operating-design record for the damaged S95F's blackout
 
 The panel could go completely black on sparse For You/Live pages and some dark/full-screen HDMI films while audio and the TV's Linux system continued. The same video behind the Ugoos home or a populated TV Apps page could remain visible. The owner called some incidents reboots; the retained symptom supports a panel/controller stop without establishing that every incident was a full TV reboot. A separate Ugoos crash from accessing `/sys/class/amvecm/*` was a different failure and must not be mixed into this diagnosis.
 
+At its worst the loop repeated every **46–51 seconds**: the controller kernel log showed the stock monitor's error detect (`0x10`), paired controller resets and a USB disconnect/re-enumeration each time.
+
 A retained accepted error-status query returned **`0x10`** with a matching QDF diagnostic. The selected AVE decoder names bit 4 **RT Protect**. That decodes a status word; it does not by itself identify a rail, temperature or physical cause. The host AVE recovery monitor uses a distinct ERR-GPIO fault predicate and history. A status label is not its reset condition. Direct GPIO getters may acquire/reconfigure GPIO ownership, so they are not passive status-memory reads.
 
 Firmware analysis connected sensing/reference comparisons, damaged-region lane history, fault-score progression and a stop branch. All 24 historically noted faulting lanes fell within the damaged patch, approximately lanes 554–649; the most visible line was near lanes 626–631. The later mask deliberately covered a broader fixed window. Physical mapping came from owner measurement and operational correlation, not a recovered universal electrode/calibration map.
@@ -69,13 +71,13 @@ The mask does not repair damaged conductors, restore lost emission, fix optical 
 
 | Local relative identifier | Role |
 | --- | --- |
-| `claude-20261028/tools/mask_watcher.py` | Saved watcher state machine, budgets, source handling and lock coordination |
-| `claude-20261028/docs/HANDBOOK.md` | Owner-confirmed outcome, chronology, deployment references and incident history |
-| `overnight/lane-mask-read-20261028ka` | KA reader and classifications |
-| `overnight/lane-mask-write-20261028kb/Program.cs` | KB exact bit direction, window, admission and readback |
-| `overnight/telemetry-read-20261028kd` | KD telemetry |
-| `overnight/rtp-lane-table-writers-20261028ec/README.md` | Source-owned primary/secondary/counter lifetimes and corrected trainer gate |
-| `overnight/firmware-rtp-producer-20261028df/README.md` | Later score/threshold/fault producer analysis |
+| `claude/tools/mask_watcher.py` | Saved watcher state machine, budgets, source handling and lock coordination |
+| `claude/docs/HANDBOOK.md` | Owner-confirmed outcome, chronology, deployment references and incident history |
+| `overnight/lane-mask-read-ka` | KA reader and classifications |
+| `overnight/lane-mask-write-kb/Program.cs` | KB exact bit direction, window, admission and readback |
+| `overnight/telemetry-read-kd` | KD telemetry |
+| `overnight/rtp-lane-table-writers-ec/README.md` | Source-owned primary/secondary/counter lifetimes and corrected trainer gate |
+| `overnight/firmware-rtp-producer-df/README.md` | Later score/threshold/fault producer analysis |
 | `tcon-research/rt-protect-host-recovery.md` | RT Protect status versus ERR-GPIO monitor boundary |
 | `RECOVER-PANEL.md` and earlier recovery helper | Historical procedure; old boot pins require requalification |
 

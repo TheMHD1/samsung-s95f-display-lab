@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Morning audit after an S0 bake (Claude 2026-11-19, v2; replaces the Codex draft). Offline: reads saved captures only.
+"""Morning audit after an S0 bake (Claude, v2; replaces the Codex draft). Offline: reads saved captures only.
 PASS requires all of:
   1 generation: the new stored D4 generation is newer than the reference capture's.
   2 untrimmed columns (outside 1248-1268 and +/-3 columns around every lane trimmed in this or the previous bake):

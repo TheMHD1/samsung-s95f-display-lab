@@ -15,13 +15,13 @@ All addresses and words are **S95F 77-inch, one firmware: worked examples to ver
 
 | Folder | Stage | What |
 |---|---|---|
-| `config.py`, `config.example.json` | setup | Every machine-specific item: TV root-shell template, work dir, player, camera hook, alerts, TV time zone, bake window ([§2](GUIDE.md#2-install-and-configure-no-tv-contact)) |
+| `config.py`, `config.example.json` | setup | Every machine-specific item: TV root-shell template, work dir, player, camera hook, alerts, TV time zone, calibration window ([§2](GUIDE.md#2-install-and-configure-no-tv-contact)) |
 | `tcon/helpers/` | build | C# TCON USB helpers, source only ([§3](GUIDE.md#3-build-the-helpers-source-only-no-binaries-ship)) |
-| `tcon/` | read / poke / bake / runtime | `backup_items.py`, `tvdump.py`, `tvtool.py`, `d4store.py`, `bake_now.py`, `after_now.sh`, `bake_eval.py`, `rt_tool.py`, `pin_helper.py` ([§4](GUIDE.md#4-safety-rules-and-the-backup)–[§11](GUIDE.md#11-runtime-trims-s1-and-the-blue-weight)) |
+| `tcon/` | read / poke / calibration run / runtime | `backup_items.py`, `tvdump.py`, `tvtool.py`, `d4store.py`, `bake_now.py`, `after_now.sh`, `bake_eval.py`, `rt_tool.py`, `pin_helper.py` ([§4](GUIDE.md#4-safety-rules-and-the-backup)–[§11](GUIDE.md#11-runtime-trims-s1-and-the-blue-weight)) |
 | `measure/` | measure | Test clips, player + camera capture, `colratio.py` (offline per-column ratios from one photo) ([§6](GUIDE.md#6-measure-the-line)) |
 | `offline/` | plan | `s0words.py`: gain to word calculator with the tools' bounds |
-| `services/` | automate | Night bake, runtime re-apply, bake guard: **reference implementations, adapt before use** ([§12](GUIDE.md#12-automation-reference-implementations-adapt-before-use)) |
-| `examples/` | reference | The S95F bake-11 plans (worked example, helper pins removed) |
+| `services/` | automate | Nightly calibration run, runtime re-apply, calibration guard: **reference implementations, adapt before use** ([§12](GUIDE.md#12-automation-reference-implementations-adapt-before-use)) |
+| `examples/` | reference | The S95F final calibration plans (worked example, helper pins removed) |
 
 Safety in one line: read-only backup first, identity write first, RAM only with read-back, hard bounds, stop on any
 non-Clean controller state, no static pictures, and never write stored compensation, flash, curve tables or the BE block

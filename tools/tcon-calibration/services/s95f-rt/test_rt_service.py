@@ -100,9 +100,9 @@ def test_others_active_proc_scan(tmp_path, monkeypatch):
     assert S.others_active(str(proc)) is None
     p(11, [b'python3', b'-B', b'/x/s0svc/s0_nightly.py', b'--live'], '0::/user.slice/app.slice/s0-nightly.service\n')
     assert S.others_active(str(proc)) is None                          # the s0-nightly unit is allowed
-    (tmp_path / 's0.log').write_text('2026-11-19T00:00:00Z TV on; waiting for standby\n2026-11-19T00:00:01Z armed on TV in /tmp/x\n')
+    (tmp_path / 's0.log').write_text('2000-01-01T00:00:00Z TV on; waiting for standby\n2000-01-01T00:00:01Z armed on TV in /tmp/x\n')
     assert 's0-nightly busy' in S.others_active(str(proc))
-    (tmp_path / 's0.log').write_text('2026-11-19T00:00:00Z TV on; waiting for standby\n'); assert S.others_active(str(proc)) is None
+    (tmp_path / 's0.log').write_text('2000-01-01T00:00:00Z TV on; waiting for standby\n'); assert S.others_active(str(proc)) is None
     for i, name in enumerate([b'e3.py', b'tvtool_e2.py', b'/a/arm_wake.py', b'bake_now.py', b's0_nightly.py', b'after_now.sh']):
         d = tmp_path / f'proc{i}'; proc2 = d
         (d / '7').mkdir(parents=True); (d / '7' / 'cmdline').write_bytes(b'python3\0-B\0' + name + b'\0'); (d / '7' / 'cgroup').write_text('0::/\n')
@@ -116,9 +116,9 @@ def test_masked_since_state_and_log(tmp_path, monkeypatch):
     (tmp_path / 'st.json').write_text(json.dumps(dict(phase='PAUSED', phase_since=now - 30, heartbeat_t=now - 5)))
     assert S.masked_since(now) is None
     (tmp_path / 'st.json').write_text('{bad')
-    (tmp_path / 'w.log').write_text('2026-11-19T21:04:38 [host] phase PAUSED -> MASKED after 62s: limit 40 T=32\n')
-    assert S.masked_since(now) == time.mktime(time.strptime('2026-11-19T21:04:38', '%Y-%m-%dT%H:%M:%S'))
-    (tmp_path / 'w.log').write_text('2026-11-19T21:04:38 [h] phase PAUSED -> MASKED after 62s\n2026-11-19T21:05:00 [h] phase MASKED -> PAUSED after 22s\n')
+    (tmp_path / 'w.log').write_text('2000-01-01T21:04:38 [host] phase PAUSED -> MASKED after 62s: limit 40 T=32\n')
+    assert S.masked_since(now) == time.mktime(time.strptime('2000-01-01T21:04:38', '%Y-%m-%dT%H:%M:%S'))
+    (tmp_path / 'w.log').write_text('2000-01-01T21:04:38 [h] phase PAUSED -> MASKED after 62s\n2000-01-01T21:05:00 [h] phase MASKED -> PAUSED after 22s\n')
     assert S.masked_since(now) is None
 
 # ---- apply budget --------------------------------------------------------------------------------------------------
@@ -485,7 +485,7 @@ def test_ca_differs_restores_and_stops(env):
 
 def test_s0_busy_age_limit(tmp_path, monkeypatch):
     for k, v in (('S0OWN', 'own'), ('S0STATUS', 'st.json'), ('S0LOG', 's0.log')): monkeypatch.setattr(S, k, tmp_path / v)
-    (tmp_path / 's0.log').write_text('2026-11-19T00:00:01Z armed on TV in /tmp/x\n')
+    (tmp_path / 's0.log').write_text('2000-01-01T00:00:01Z armed on TV in /tmp/x\n')
     (tmp_path / 'st.json').write_text(json.dumps({'last_bake': {'result': 'in_progress'}})); (tmp_path / 'own').touch()
     assert S.s0_busy()
     old = time.time() - S.S0_BUSY_MAX_S - 60

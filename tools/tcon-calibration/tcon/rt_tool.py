@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run TconDump-rt --rt MODE PLAN on the TV (Claude 2026-11-19; rtsvc/RT-SPEC.md §2, review-1 fixes).
+"""Run TconDump-rt --rt MODE PLAN on the TV (Claude; rtsvc/RT-SPEC.md §2, review-1 fixes).
 Flow as tvtool_e2.py (pause the watcher, hold the TV lock, stage the helper, run it, always unlock + unpause), plus:
 - one rt_tool at a time on this host (flock rtsvc/rt_tool.lock); refuses if the watcher is already paused by someone else;
 - per-run TV lock owner (claude-rt-<token>), so no run ever re-enters a lock held by tvtool/tvdump or another rt_tool;

@@ -1,6 +1,6 @@
 # Mobile Demura and future panel flashing: consolidated research
 
-Saved 2026-10-30 for continuing the S95F investigation. This dossier connects the mobile service app, firmware write paths, backup research and missing calibration knowledge. It preserves **research, not a completed flashing procedure**. No Mobile Demura launch, phone pairing, compensation upload or panel-calibration write was performed in this project. Documentation work did not contact the TV.
+Saved for continuing the S95F investigation. This dossier connects the mobile service app, firmware write paths, backup research and missing calibration knowledge. It preserves **research, not a completed flashing procedure**. No Mobile Demura launch, phone pairing, compensation upload or panel-calibration write was performed in this project. Documentation work did not contact the TV.
 
 Use this as the entry point alongside [firmware/storage details](FIRMWARE-AND-COMPENSATION.md), [controller transport](../CONTROLLER-COMMUNICATIONS.md) and the [ordered future research plan](FUTURE-PANEL-CALIBRATION.md). The optical Kodi/TV-overlay correction and the [blackout mitigation](../BLACKOUT-MITIGATION.md) solve different problems; neither decodes Samsung calibration coefficients.
 
@@ -74,7 +74,7 @@ The early report says any client can write/erase without authentication. The app
 
 The earlier narrative describes a Samsung service phone sending a camera-derived table. The TV app's mobile-channel machinery supports the mobile-client part. It does not identify an exact companion APK, iOS bundle, specialized service handset, external jig, supported camera, technician credential, calibration target sequence or optical fitting algorithm. No authorized tool distribution or current technician procedure has been verified.
 
-A web check on 2026-10-30 for the exact Mobile Demura name and TV package did not locate an authoritative public companion-app procedure. That search result is bounded; it does not prove no service documentation exists.
+A web check for the exact Mobile Demura name and TV package did not locate an authoritative public companion-app procedure. That search result is bounded; it does not prove no service documentation exists.
 
 Samsung separately documents **Smart Calibration through SmartThings**, using a phone camera to adjust picture quality in Movie mode and offering a picture-settings reset. That support article is not evidence of Mobile Demura access, per-column repair or TCON table flashing. See [Samsung's Smart Calibration guide](https://www.samsung.com/uk/support/tv-audio-video/how-to-use-smart-calibration-on-samsung-smart-tv/). Its listed model compatibility must not be extrapolated into an S95F service-tool contract.
 
@@ -147,6 +147,6 @@ At present there is no validated coefficient writer or native-calibration conver
 
 The sanitized [source manifest](../../../research/panel/sources.json) records hashes and relative identifiers of retained reports. Raw reports, managed/native traces, actual receipts, OEM binaries and unique calibration remain local; private provenance maps are saved with the local dossier. Report hashes identify evidence used here, not independent attestation of every inference in it.
 
-Priority sources are `deep-dive-20261029/userspace-functions/{REPORT.md,notes/sdm-il.txt}`, `comp-backup-contract/REPORT.md`, its `persistence-followup/REPORT.md`, `storage-metadata-reader/post-acquisition-review/REPORT.md`, and the earlier controller/SoC/LUT reports listed in the manifest. Earlier “all paths permanently write,” “any client,” “RAM-only update,” “old slot is safe,” “abort stops saves” and “ok proves success” claims must be evaluated against these later bounded traces.
+Priority sources are `deep-dive/userspace-functions/{REPORT.md,notes/sdm-il.txt}`, `comp-backup-contract/REPORT.md`, its `persistence-followup/REPORT.md`, `storage-metadata-reader/post-acquisition-review/REPORT.md`, and the earlier controller/SoC/LUT reports listed in the manifest. Earlier “all paths permanently write,” “any client,” “RAM-only update,” “old slot is safe,” “abort stops saves” and “ok proves success” claims must be evaluated against these later bounded traces.
 
 A new session should read this dossier and its linked chapters, then inspect the private source manifest before doing device work. The publication did not deploy a flasher, expose a service or change the running correction/watchers.

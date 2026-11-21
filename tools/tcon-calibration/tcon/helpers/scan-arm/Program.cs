@@ -39,7 +39,7 @@ static class P {
     // --armwait LOG POKES WAIT_S SAMPLE_S: wait (on the TV) for the controller USB device to appear, wait until every OLD value
   // is present (table loaded), require stop=0 fault=0 limit=40 (gate may be 0 during off-sensing), write, read back, then log
   // the sequencer record, R guard, bank selector and the poked words every 50 ms. Same address/value bounds as --poke.
-  // s0svc v2 (Claude 2026-11-19): SIGTERM = cancel (checked in every loop); after any write, an abnormal exit (cancel,
+  // s0svc v2 (Claude): SIGTERM = cancel (checked in every loop); after any write, an abnormal exit (cancel,
   // readback mismatch, USB/guard error before the scan power-down stage 0x0011xxxx) restores OLD where the word still reads
   // NEW and logs it; device loss after stage 0x0011 = normal end (rc 3).
   static volatile bool cancel;

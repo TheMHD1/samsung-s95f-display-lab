@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Post-bake camera batch (Claude 2026-11-19). Same clips, column indices and normalisation as the post200 set, so
+"""Post-bake camera batch (Claude). Same clips, column indices and normalisation as the post200 set, so
 results compare 1:1. Usage: python3 -B postbake.py LABEL [--ref post200] [--skip-grey] [--skip-black] [--split32]
 Each batch runs under screencheck.hold (TV must show the player; short static time) and blanks the player afterwards.
 The core is located per photo (darkest 6-column G window start s): core = s-3..s+6, lane 640 = s+23/24,
-healthy = s-37..s-10, s+13..s+20, s+28..s+62 (2026-11-19: fixed indices broke when the camera was moved)."""
+healthy = s-37..s-10, s+13..s+20, s+28..s+62 (fixed indices broke when the camera was moved)."""
 import argparse, json, os, sys
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)

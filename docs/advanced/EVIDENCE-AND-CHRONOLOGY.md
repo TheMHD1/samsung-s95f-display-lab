@@ -23,7 +23,7 @@ This is a sanitized account of local research, not a dump of the working directo
 | Native-4K Kodi correction | Per-column strip on the player | Better alignment without TV-root dependency |
 | HDR shader v2 | Raw-PQ correction includes GUI/subtitles | Avoid stock-shader mismatches and VS10 remapping assumptions |
 | Pixel Shift / HDMI incident work | Following verified; odd TV-overlay phase limited; full player reboot needed after one HDR failure | Calibration and reliability must be evaluated together |
-| Public expansion, 2026-10-30 | Root, controller, GPU and future compensation research organized | No new device operation or panel write |
+| Public expansion | Root, controller, GPU and future compensation research organized | No new device operation or panel write |
 
 ## Corrections future contributors should not lose
 
@@ -54,14 +54,14 @@ These are descriptive relative identifiers, not published raw reports or paths t
 | Local research identifier | Topic now covered publicly |
 | --- | --- |
 | root-access/source and host controller source | [ROOT-ACCESS](ROOT-ACCESS.md) |
-| rtp-lane-table-writers-20261028ec; firmware-rtp-producer-20261028df | [CONTROLLER-COMMUNICATIONS](CONTROLLER-COMMUNICATIONS.md) |
+| rtp-lane-table-writers-ec; firmware-rtp-producer-df | [CONTROLLER-COMMUNICATIONS](CONTROLLER-COMMUNICATIONS.md) |
 | tcon-path; tcon-persistence; comp-layout | [FIRMWARE-AND-COMPENSATION](panel/FIRMWARE-AND-COMPENSATION.md) |
 | comp-hardware-decoder; comp-indexing-followup; ip-lut-consumer; ip-lut-apply | Firmware consumer findings and [future dossier](panel/FUTURE-PANEL-CALIBRATION.md) |
 | soc-path; receiver-storage; boot-analysis; boot-counterpart | Internal receiver/export and firmware acquisition gaps |
-| deep-dive-20261029/userspace-functions/REPORT; notes/sdm-il | Mobile Demura TV app, managed mobile receiver/write handlers and native TCON flash chain; companion phone app unverified |
+| deep-dive/userspace-functions/REPORT; notes/sdm-il | Mobile Demura TV app, managed mobile receiver/write handlers and native TCON flash chain; companion phone app unverified |
 | comp-backup-contract/REPORT; persistence-followup/REPORT | Wider fixed-offset read candidate, false-success counterexamples, both-slot overwrite and absent persistence barrier; [panel dossier](panel/README.md) |
 | storage-metadata-reader/post-acquisition-review/REPORT | Actual transport replay versus unresolved storage completion/freshness |
-| tools/mask_watcher; lane-mask-write-20261028kb/Program | Exact deployed skip direction, guards and recovery state machine; [blackout chapter](BLACKOUT-MITIGATION.md) |
+| tools/mask_watcher; lane-mask-write-kb/Program | Exact deployed skip direction, guards and recovery state machine; [blackout chapter](BLACKOUT-MITIGATION.md) |
 | overlay-observation; canvas-position-observation; efl-oneframe-live; screenshot-server; capture-strip | [GRAPHICS-AND-GPU](GRAPHICS-AND-GPU.md) |
 | gapfix/LINE-FIX-REPORT sections 2, 7–11; PLAN MGA tests | Later successful overlay, shader, Pixel Shift and reliability work |
 | agent-demura-path and early agent-demura-format recommendations | Historical claims; later concrete traces take precedence |

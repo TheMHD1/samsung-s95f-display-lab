@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""guard.py = unit s95f-bake11-guard (Claude 2026-11-20, v2 after review 1): keeps the owner-approved BAKE 11 on the TV.
+"""guard.py = unit s95f-bake11-guard (Claude, v2 after review 1): keeps the owner-approved BAKE 11 on the TV.
 Active only while the approved plans are in force (s0svc/plan.json = bake-11 words, rtsvc/rt_plan.json = rt_plan-bake11);
 otherwise idle with one notice (e.g. after the RUN-BAKE11 fallback F to bake 10). Every 60 s, and nothing at all while
 bake11/guard.disable or bake11/maintenance exists, a job of its own runs, or another TV tool runs:

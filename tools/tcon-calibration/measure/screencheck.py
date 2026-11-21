@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pre-shot screen check for player camera tests (Claude 2026-11-19, after a night of shooting the Samsung Apps page).
+"""Pre-shot screen check for player camera tests (Claude, after a night of shooting the Samsung Apps page).
 
 ok() -> (True, info) only when: TV source is config tv.player_input (S95F test setup: HDMI3), the TV screensaver app is not running, and the TV's own graphics
 (OSD) plane is essentially empty (enlightenment_info -dump_screen captures OSD only; HDMI video is not in it, so any

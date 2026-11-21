@@ -18,7 +18,7 @@ def rpc(method, params=None):
 def screensaver_on():
     return '"System.ScreenSaverActive":true' in rpc('XBMC.GetInfoBooleans', {'booleans': ['System.ScreenSaverActive']})
 def wake():
-    """Wake Kodi's black screensaver (2026-11-20, Claude): since the line-fix helpers stopped sending Kodi actions (3-min idle
+    """Wake Kodi's black screensaver (Claude): since the line-fix helpers stopped sending Kodi actions (3-min idle
     fix), nothing else wakes it, and a test clip would play UNDER the black screensaver. JSON-RPC Input.ExecuteAction wakes
     it (the first action is consumed by the wake). -> True when the screensaver is off."""
     for k in range(4):

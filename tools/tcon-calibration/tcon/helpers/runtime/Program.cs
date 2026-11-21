@@ -1,6 +1,6 @@
 // Read-only external-controller memory dump for the owner's S95F.
 // The only OUT traffic is 12-byte read headers (opcode 0x101 direct, or 0x1 with a comp buffer ID). There is no write path in this program.
-// TconDump-rt (Claude 2026-11-19): copy of TconDump-e2 (existing commands unchanged; they DO write: --poke/--restore/--wpoke/--armwait)
+// TconDump-rt (Claude): copy of TconDump-e2 (existing commands unchanged; they DO write: --poke/--restore/--wpoke/--armwait)
 // plus --rt (power-on runtime gains, rtsvc/RT-SPEC.md), which writes only 586955CC/D0/D4/D8 and the pair 58602700/58622700.
 using System; using System.Collections.Generic; using System.Diagnostics; using System.IO; using System.Linq;
 using System.Net; using System.Net.Sockets; using System.Runtime.InteropServices; using System.Security.Cryptography; using System.Text.Json;
@@ -41,9 +41,9 @@ static class P {
     if(FakeDev.On)return;
 #endif
     Need(File.ReadAllText("/proc/sys/kernel/random/boot_id").Trim()==boot,"boot changed");Need(Rd("idVendor")=="04e8"&&Rd("idProduct")=="2001","ids");Need(int.Parse(Rd("busnum"))==7&&int.Parse(Rd("devnum"))==dev,"device");Need(Rd("power/runtime_status")=="active","usb not active");string drv=Usb+":1.2/driver";if(Directory.Exists(drv))Need(Path.GetFileName(new DirectoryInfo(drv).ResolveLinkTarget(true)?.FullName??"")=="usbfs","interface driver");fd=open($"/dev/bus/usb/007/{dev:D3}",2|0x80000|0x8000);Need(fd>=0,"open");uint itf=2;Need(ioN(fd,Claim,ref itf)==0,"claim");}
-  // ---- --rt MODE PLAN (Claude 2026-11-19; rtsvc/RT-SPEC.md, CONSULT-14 §5-§6): power-on runtime gains -------------------
+  // ---- --rt MODE PLAN (Claude; rtsvc/RT-SPEC.md, CONSULT-14 §5-§6): power-on runtime gains -------------------
   // The ONLY addresses --rt ever writes: the four S1 words of lanes 627..630 and the weight pairs (blue 58602700/58622700;
-  // since CONSULT-18 red 586026F8/586226F8 and green 586026FC/586226FC, Claude 2026-11-20).
+  // since CONSULT-18 red 586026F8/586226F8 and green 586026FC/586226FC, Claude).
   // PLAN = S1A:STOCK:NEW,S1B:STOCK:NEW,S1C:STOCK:NEW,S1D:STOCK:NEW,W (hex words; W = BLUE, or RED/GREEN/BLUE, decimal;
   // BLUE alone = red and green stay 205). All bounds are checked before the claim (RtParse, from Main) and again in front
   // of every single write (RtCheck).
@@ -161,7 +161,7 @@ static class P {
     if(a[0]=="--rt")Rt(a,o);
     else if(a[0]=="--restore"){var log=new List<string>();var items=a[4].Split(',').Select(s=>s.Split(':')).Select(s=>(ad:Convert.ToUInt32(s[0],16),nw:Convert.ToUInt32(s[1],16))).ToList();Need(items.Count<=32,"count");foreach(var i in items){if(IsEnable(i.ad))Need(i.nw<=1,"enable values are 0/1");else{CheckAddr(i.ad);CheckVal(i.nw);}}foreach(var i in items){Write32(i.ad,i.nw);uint v=R32(i.ad);log.Add($"{i.ad:x8}={v:x8}");Need(v==i.nw,$"restore readback {i.ad:x8} {v:x8}");}o["writes"]=log;}
     else if(a[0]=="--wpoke"){
-      // CONSULT-13 E2 (Claude 2026-11-19): runtime per-colour weights 0x586026F8/FC/2700 + twins 0x586226F8/FC/2700 only.
+      // CONSULT-13 E2 (Claude): runtime per-colour weights 0x586026F8/FC/2700 + twins 0x586226F8/FC/2700 only.
       // Values 0..820; every register written together with its twin (same old/new); refuses unless the record is
       // type 3 mode 8 and all six weights are unchanged for 5 s; OLD must match; read-back must equal NEW, else both
       // already-written registers are put back to OLD and the call fails.

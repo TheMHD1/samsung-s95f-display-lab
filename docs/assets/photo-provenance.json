@@ -1,5 +1,4 @@
 {
-  "date": "2026-10-30",
   "photos": [
     {
       "asset": "line-before-phone-grey10.jpg",
@@ -18,6 +17,46 @@
       "source_sha256": "4a60e4b3f924d15656fb02b8bf7faf12b6f88b3315d4f62f04139eb935e42c14",
       "public_sha256": "4a60e4b3f924d15656fb02b8bf7faf12b6f88b3315d4f62f04139eb935e42c14",
       "treatment": "Metadata removed; orientation retained where required. Decoded pixels unchanged. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "line-before-content-1.jpg",
+      "public_sha256": "5857309a657d1b570770112546c425bd2ef75c6b50a52134d5b40eb1bbd749cf",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "line-before-content-2.jpg",
+      "public_sha256": "7873b012e7807e22da479d0ee458d726f7ab5b8d54d9ed3413a7aba832b902b1",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "line-before-white.jpg",
+      "public_sha256": "4e629bb57ab2fc3e751905b48ccaf267f427a3dc9a45956e21502f2e38ebeefb",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "after-dark-scene.jpg",
+      "public_sha256": "fb62b1705d21950e73bc104384b44bbcb84c7de044c14fece4411f2d2d4beefc",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "after-impact-area.jpg",
+      "public_sha256": "deb985e7b8e6958e059b50445b88b767e2a872f17f17271331595ca4f360d39d",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "after-bright-scene.jpg",
+      "public_sha256": "e7f76601089d1b46621522dbc82d73617fcf0eb339651598cfb82528bb6ee914",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "after-detail-scene.jpg",
+      "public_sha256": "9c9fbd84b0aaf876aa843f0094ccd9d988e23e2a0411c8f88f81db3dc2aa0696",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
+    },
+    {
+      "asset": "after-flat-field.jpg",
+      "public_sha256": "8859405b38a4b7d6bb3c41d2cfc40b6e376fdac616749a8d87175442ef5e9cca",
+      "treatment": "Owner phone photo. Scaled to 1200 px long side, full frame kept, metadata removed. No crop, retouch, exposure adjustment or generative edit."
     }
   ]
 }

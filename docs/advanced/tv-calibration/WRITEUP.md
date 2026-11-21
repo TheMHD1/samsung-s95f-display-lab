@@ -5,13 +5,18 @@
 This is the story of how a physically damaged band of columns on one S95F panel was brought back to within a few
 percent of its neighbours, **inside the TV**, for every source and app, without writing the panel's calibration storage
 ourselves. It is written for other owners of damaged panels and for engineers who want to build on it. Numbers are in
-[RESULTS.md](RESULTS.md); the earlier, player-side correction and the blackout mask are described elsewhere in this
-repository.
+[RESULTS.md](RESULTS.md). The same damage also made the panel black out about every 50 seconds on bad days, which made
+the TV unusable; that was fixed first, with a lane skip mask
+([short explanation](../../../README.md#problem-1-the-blackouts-in-short) · [deep dive](../BLACKOUT-MITIGATION.md)).
 
-![Band brightness before and after](../../assets/bake11-band-luminance.png)
+![Band brightness before and after](../../assets/line-before-after-chart.png)
 
 ## In short
 
+- **Blackouts first:** the damaged lanes kept failing a per-lane check in the panel controller, which switched the picture
+  off and was reset in a loop. A skip flag for lanes 540–661, re-applied at every controller boot, ended it (24 of 24
+  boots clean). [Short explanation](../../../README.md#problem-1-the-blackouts-in-short) ·
+  [deep dive](../BLACKOUT-MITIGATION.md)
 - Columns 1255–1260 of the panel are damaged. Uncorrected, the four worst gave about **1 % of normal light at 20 % grey**
   and 11–30 % at 50 % grey.
 - The TV already measures every sub-pixel in a maintenance scan and compensates drive from the result. The damaged
@@ -93,29 +98,29 @@ a bad write there could brick the panel. Instead:
 The first attempt (lane 629 at ×0.85) moved the stored reading but left it above neutral, and nothing changed on
 screen. That looked like failure until the "adds drive only below neutral" rule was understood. The second attempt
 (×0.80 on both worst lanes) closed about **75 % of the red/green gap and 60 % of the blue gap** in one scan
-(RESULTS §3–4). From there it was careful stepping: bake 5 went too far and two columns glowed near black (overshoot is
-strongly non-linear near neutral), bake 6 went back and showed the scan repeats to about one count, and bakes 7–11
+(RESULTS §3–4). From there it was careful stepping, one *calibration run* (one TV scan with our gains set) at a time: run 5 went too far and two columns glowed near black (overshoot is
+strongly non-linear near neutral), run 6 went back and showed the scan repeats to about one count, and runs 7–11
 shaped the result column by column.
 
 **The firmware's own line repair.** One more stock mechanism shapes everything: after the scan, the firmware repairs
 isolated vertical lines in the stored result. A column that differs from both neighbours by more than about 40–45
 counts is replaced by the mean of the three largest of its four nearest neighbours. On a band of damaged columns this
-means each column partly inherits a damaged neighbour's reading. Understanding this (bake 8) explained puzzling
+means each column partly inherits a damaged neighbour's reading. Understanding this (run 8) explained puzzling
 "cross-talk" between lanes and fixed two columns that had stayed dim near black.
 
 ## 5. The three TV-side layers
 
 | Layer | What | Lives in | Survives |
 |---|---|---|---|
-| 1. Scan-time sensing gain ("the bake") | Per-column gain on lanes 627–630, set just before each scan | Result in TV flash (stored by the TV) | Power cuts; replaced at the next scan unless set again |
+| 1. Scan-time sensing gain | Per-column gain on lanes 627–630, set just before each scan | Result in TV flash (stored by the TV) | Power cuts; replaced at the next scan unless set again |
 | 2. Runtime sensing gain | Per-lane gain used by the panel's real-time correction loop (runs about every 24 s while on): ×0.90 / ×0.67 / ×0.60 / ×0.78 on lanes 627–630 | Controller RAM | Until the next controller boot |
 | 3. Blue runtime weight | Panel-wide strength of the blue compensation, ×4 of stock | Controller RAM | Until the next controller boot |
 
-Why three: the bake alone (layer 1) left bright scenes 6–9 % short, because one gain per column cannot fit every level.
+Why three: the scan-time gain alone (layer 1) left bright scenes 6–9 % short, because one gain per column cannot fit every level.
 The runtime gain (layer 2) acts like a brightness gain on the band: about +5–6 % light per −25 % gain, equal in red,
 green and blue. The blue weight (layer 3) scales the blue compensation; healthy columns carry little compensation, so
 it acts mainly on the band. It is not free: the healthy panel's blue drops about 1 % per +100 units, so the white is a
-little warmer (the TV's white-balance blue gain can offset that). Bake 11 then re-tuned layer 1 so the band was no
+little warmer (the TV's white-balance blue gain can offset that). The final calibration (run 11) then re-tuned layer 1 so the band was no
 longer over-driven in red/green at low grey (camera maximum at 10 % grey: 1.20 before, 1.01 after; RESULTS §6).
 
 ## 6. Keeping it on the TV
@@ -124,20 +129,20 @@ Layer 1 has to be re-applied before **every** scan, and layers 2–3 after **eve
 on an always-on server do that:
 
 - **Night service:** waits for a standby in which the TV will scan (the TV scans about 15 minutes into the first standby
-  that starts at least about 4 hours after its last scan), sets the bake gains right after the controller powers up for
+  that starts at least about 4 hours after its last scan), sets the calibration gains right after the controller powers up for
   the scan, and afterwards checks the stored result against the last good one. A bad result latches it off.
 - **Runtime service:** sees each new controller boot and re-applies layers 2–3 within a few minutes; the guard switches them off
-  about 10 minutes after boot if the stored result is not the bake those trims were fitted for.
-- **Guard:** reads the stored result at each boot and twice a day. If the bake is gone (a scan without us, a menu scan,
-  a server outage), it switches the runtime trims off at once, then re-runs the bake by itself when nobody is watching,
+  about 10 minutes after boot if the stored result is not the calibration those trims were fitted for.
+- **Guard:** reads the stored result at each boot and twice a day. If the stored calibration is gone (a scan without us, a menu scan,
+  a server outage), it switches the runtime trims off at once, then repeats the calibration run by itself when nobody is watching,
   inside a daytime/evening window, at most twice a day, and stops and reports after two failures.
 
-Not covered: a TV **firmware update** (it would remove the access this depends on, the blackout mask and the bake; keep
+Not covered: a TV **firmware update** (it would remove the access this depends on, the blackout mask and the calibration; keep
 automatic updates off), a factory reset, and loss of the server.
 
 ## 7. Results
 
-![Blue balance of the band](../../assets/bake11-blue-ratio.png)
+![Blue balance of the band](../../assets/line-blue-balance.png)
 
 | Grey | 100 % | 50 % | 30 % | 20 % | 10 % | 5 % |
 |---|---|---|---|---|---|---|
@@ -152,16 +157,16 @@ then reads about 1.00 (an illustration from the same photo, not a separate measu
 dark scenes reads as slightly yellow, not as too bright.
 
 All measurements are SDR in Movie mode, along one horizontal strip of the panel. Full tables, the progression through
-eleven bakes and the reliability figures: [RESULTS.md](RESULTS.md).
+eleven calibration runs and the reliability figures: [RESULTS.md](RESULTS.md).
 
 ## 8. What failed, and why
 
 | Approach | What happened |
 |---|---|
-| Runtime gain on the damaged columns before any bake | No response: the columns read above neutral, so no gain change could add drive. It became useful only after the bakes (layer 2). |
+| Runtime gain on the damaged columns before any calibration run | No response: the columns read above neutral, so no gain change could add drive. It became useful only after the calibration runs (layer 2). |
 | Switching compensation enable and gate registers off for 30–50 s | No visible change anywhere. Dropped. |
-| Bake 1 (too small) | Stored reading moved, light did not. Taught us the "below neutral only" rule. |
-| Bake 5 (too large) | Two columns glowed, 11–29× too bright near black. Rolled back next scan. |
+| Run 1 (too small) | Stored reading moved, light did not. Taught us the "below neutral only" rule. |
+| Run 5 (too large) | Two columns glowed, 11–29× too bright near black. Rolled back next scan. |
 | One gain per column for all colours | Cannot fix blue at low grey: the damaged columns' blue reads 125–155 counts above their red, and the line repair mixes in damaged neighbours. The stored blue sits on a floor no gain set can go below (RESULTS §7). |
 | Panel curve tables | They act on the whole panel, not on columns; the band's blue moved by 0.03 where 0.5 was needed. One test write made the controller report a fault and restart itself (no lasting effect). Closed. |
 | Editing the blue part of the scan's raw measurement during the scan | It worked where it was applied: stored blue equal to red on the band, correct blue on photos at every level. But bulk writes over the controller's debug channel proved unreliable, so that method was dropped. A good result would also have lasted only until the next nightly scan. |
@@ -182,7 +187,7 @@ The owner's limit was "don't brick the TV". In practice:
 - Hard bounds on every gain the tools will set, small steps per scan, and a stop on any controller fault state.
 - Every tool was independently reviewed before routine use, and again after each change. Once, an unreviewed
   curve-table command ran live by mistake (restored and verified within a minute), which produced the rule below. Analysis consults ran offline on saved data.
-- As few variables per test as possible. Every bake was predicted first and checked against its prediction before the next one.
+- As few variables per test as possible. Every calibration run was predicted first and checked against its prediction before the next one.
 - The panel's own protections stay on, except the narrow blackout mask, which is re-verified at every boot.
 - Lessons that became rules: never run a live-capable command "to test argument parsing"; never write the curve table
   that faulted; never leave a static test picture on the OLED.
@@ -206,7 +211,7 @@ The owner's limit was "don't brick the TV". In practice:
 - **Open:** why two on-demand restarts came back dark; whether the first ordinary night under the final automation
   behaves as built (it is the acceptance test).
 - The damage itself is still there and may keep growing; the calibration follows the panel's own measurement, so
-  slow change is partly absorbed, but large change would need a new bake series.
+  slow change is partly absorbed, but large change would need a new series of calibration runs.
 
 ## 11. Notes for other owners and engineers
 
@@ -221,7 +226,7 @@ The owner's limit was "don't brick the TV". In practice:
 - A per-column gain is common to all three colours. If the damaged sub-pixels' colour readings differ a lot, one colour
   will be left with a floor.
 - Anything you set in RAM must be set again for every scan and after every controller boot, or it is gone. Plan the
-  automation and the "lost bake" path before you rely on it.
+  automation and the "lost calibration" path before you rely on it.
 - Keep firmware auto-update off on a modified TV.
 
 ## 12. Will this work on other OLED and QD-OLED TVs?
@@ -243,15 +248,15 @@ works on any display, but only for that player's content.
 
 ## 13. Photos and tools
 
-Before and after bake 11, phone photos, EXIF removed:
+Before and after the fix, phone photos, EXIF removed:
 
 | Before | After |
 | :---: | :---: |
-| <img src="../../assets/line-before-content-1.jpg" width="300" alt="Dark line through real content above the impact mark"> | <img src="../../assets/bake11-after-dark-scene.jpg" width="225" alt="Dark scene after bake 11, no line"> |
-| <img src="../../assets/line-before-white.jpg" width="300" alt="The line as a thin stripe on a white field"> | <img src="../../assets/bake11-after-flat-field.jpg" width="225" alt="Flat pale field after bake 11, faint trace only"> |
-| <img src="../../assets/line-before-content-2.jpg" width="225" alt="Thin dark line through real content"> | <img src="../../assets/bake11-after-impact-area.jpg" width="225" alt="Area right above the impact mark after bake 11, no line"> |
-| | <img src="../../assets/bake11-after-bright-scene.jpg" width="225" alt="Bright snow scene after bake 11, no line"> |
-| | <img src="../../assets/bake11-after-detail-scene.jpg" width="225" alt="Detailed scene after bake 11, no line"> |
+| <img src="../../assets/line-before-content-1.jpg" width="300" alt="Dark line through real content above the impact mark"> | <img src="../../assets/after-dark-scene.jpg" width="225" alt="Dark scene after the fix, no line"> |
+| <img src="../../assets/line-before-white.jpg" width="300" alt="The line as a thin stripe on a white field"> | <img src="../../assets/after-flat-field.jpg" width="225" alt="Flat pale field after the fix, faint trace only"> |
+| <img src="../../assets/line-before-content-2.jpg" width="225" alt="Thin dark line through real content"> | <img src="../../assets/after-impact-area.jpg" width="225" alt="Area right above the impact mark after the fix, no line"> |
+| | <img src="../../assets/after-bright-scene.jpg" width="225" alt="Bright snow scene after the fix, no line"> |
+| | <img src="../../assets/after-detail-scene.jpg" width="225" alt="Detailed scene after the fix, no line"> |
 
 On flat pale fields a faint trace is still visible. Rainbow rings in some photos are camera moiré, not the panel.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bake-11 guard check (Claude 2026-11-20, CONSULT-16 sec 1/sec 6 step 3). Local files only, no TV contact.
+"""Bake-11 guard check (Claude, CONSULT-16 sec 1/sec 6 step 3). Local files only, no TV contact.
 Reads the stored D4 of bake 10 and bake 11 (bake_eval.read_d4) and prints per-column centred deltas (new - old - per-colour
 median shift, as bake_eval's footprint) and stored excess (column median - median of columns 1200..1249, as CONSULT-16).
 Verdict (exit code):
