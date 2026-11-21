@@ -1,0 +1,18 @@
+# Lane-mask watcher: keeps the blackout fix in place (reference implementation, ADAPT BEFORE USE; README.md here).
+# Install: services/install_unit.sh lane-mask-watcher
+[Unit]
+Description=TCON lane-mask watcher: lane skip flags 540-661 re-applied after each controller boot (blackout fix)
+StartLimitIntervalSec=3600
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment=TCON_KIT_CONFIG=@CONFIG@
+WorkingDirectory=@WATCHER@
+ExecStart=/usr/bin/python3 -B @KIT@/services/lane-mask-watcher/mask_watcher.py
+Restart=on-failure
+RestartSec=30
+UMask=0077
+
+[Install]
+WantedBy=default.target

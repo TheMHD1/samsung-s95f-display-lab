@@ -75,7 +75,7 @@ You need all of these before step 2.
    | `tv.bake_window` | On-demand calibration runs (one TV scan with your gains set; §9) are allowed only inside this TV-local window. *S95F example:* `10:30`–`01:15` (see 14.1). |
    | `tv.key_cmd` | Optional `{key}` remote-key command, used only to dismiss the TV screensaver before photos. |
    | `tv.player_input` | TV source name of the player's input (*S95F example:* `SOURCE_TYPE_HDMI3`). |
-   | `watcher.enabled` / `watcher.dir` | Only if you run an external blackout lane-mask watcher that uses the same pause/state files. Default off. |
+   | `watcher.enabled` / `watcher.dir` | Only if you run the blackout lane-mask watcher ([services/lane-mask-watcher](services/lane-mask-watcher/README.md)) or another one with the same pause/state files. Default off. |
    | `player.shell`, `player.clip_dir`, `player.jsonrpc_port` | Shell on the player (`{cmd}`), where the clips are, and Kodi's JSON-RPC TCP port. |
    | `camera.capture` | Takes ONE photo to `{out}.<ext>` and prints the file path. It may also print `SHUTTER=1/50` (the dark-screen guard uses it). `{shutter}` is the requested exposure or `auto`. |
    | `camera.raw_cmd` / `camera.jpeg_cmd` | Optional commands that switch the camera's image format. |
@@ -119,7 +119,7 @@ docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e DOTNET_CLI_TELEMETRY_OP
   -v $PWD/read-poke:/w -v ~/.cache/tcon-nuget:/cache mcr.microsoft.com/dotnet/sdk:10.0 \
   dotnet restore /w/TconDump.csproj --source https://api.nuget.org/v3/index.json
 # every build, offline from the cache
-for h in read-poke scan-arm runtime; do
+for h in read-poke scan-arm runtime lane-mask-read lane-mask-write lane-mask-firstscan; do
   docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e DOTNET_CLI_TELEMETRY_OPTOUT=1 -e NUGET_PACKAGES=/cache \
     -v $PWD/$h:/w -v ~/.cache/tcon-nuget:/cache mcr.microsoft.com/dotnet/sdk:10.0 \
     dotnet build /w/TconDump.csproj -c Release -o /w/bin
@@ -405,9 +405,10 @@ Calibration photos are not the finish line:
    start Screen Optimization from the menu. The stock result is stored again. A power cycle clears all RAM settings.
 4. **Controller not Clean / helper refuses**: do nothing more. Put the TV in standby, wait for it to come back on, and run
    the read-only `rt_tool.py audit` or `tvdump.py`. Never force past a refusal.
-5. **Blackout** (picture black, sound continues) is a different fault and this kit does not address it. See
-   [BLACKOUT-MITIGATION.md](../../docs/advanced/BLACKOUT-MITIGATION.md). If you run such a watcher, set
-   `watcher.enabled` so the tools pause it around helper runs.
+5. **Blackout** (picture black, sound continues) is a different fault, fixed by the lane-mask watcher in
+   [services/lane-mask-watcher](services/lane-mask-watcher/README.md) (background:
+   [BLACKOUT-MITIGATION.md](../../docs/advanced/BLACKOUT-MITIGATION.md)). If you run it, set `watcher.enabled` so the
+   tools pause it around helper runs.
 6. **`s0-nightly` LATCHED**: read `<work>/s0svc/s0_nightly.log`, fix the cause, then
    `python3 -B services/s0-nightly/s0_nightly.py --reset`.
 

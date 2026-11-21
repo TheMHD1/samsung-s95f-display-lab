@@ -21,7 +21,7 @@ the controller's flash ourselves, and the physical damage remains.
 
 **Blackouts:** [short explanation ↓](#problem-1-the-blackouts-in-short) · [deep dive](docs/advanced/BLACKOUT-MITIGATION.md) ·
 **Line:** [short explanation ↓](#problem-2-the-dark-line-in-short) · [deep dive](docs/advanced/tv-calibration/WRITEUP.md) ·
-[Results](#results) · [Do it yourself](tools/tcon-calibration/GUIDE.md) · [Safety](SAFETY.md)
+[Results](#results) · [How the tools work](#how-the-tools-work) · [Do it yourself](tools/tcon-calibration/GUIDE.md) · [Safety](SAFETY.md)
 
 | Before | After the fix |
 | :---: | :---: |
@@ -55,7 +55,8 @@ checking the panel. These parts were involved:
 **Trade-off:** the mask switches off that one sensing-consistency check for the masked lanes, so the panel's protection is
 not fully unchanged. Current monitoring and panel power control were not touched. It does not repair the damage, and it
 does not prove that driving the damaged area long-term is safe.
-**[Deep dive: fault evidence, exact bits, watcher states, recovery and limits →](docs/advanced/BLACKOUT-MITIGATION.md)**
+**[Deep dive: fault evidence, exact bits, watcher states, recovery and limits →](docs/advanced/BLACKOUT-MITIGATION.md)** ·
+**[The watcher script and helpers →](tools/tcon-calibration/services/lane-mask-watcher/README.md)**
 
 ## Problem 2: the dark line, in short
 
@@ -67,6 +68,17 @@ OLED pixels age unevenly, so in standby the TV measures every column and boosts 
 false "strong" reading and got no boost. **Our fix** lowers the measurement's gain on those columns just for the scan;
 the TV then boosts them and saves that itself. Two small runtime trims fine-tune the band after each power-on.
 **[Deep dive: measurement, the eleven calibration runs, what failed and why →](docs/advanced/tv-calibration/WRITEUP.md)**
+
+## How the tools work
+
+<img src="docs/assets/explain-tools.png" width="760" alt="Python on our server reaches the TV through a shell, starts a small C# helper on the TV, which talks to the panel controller over its internal USB service link; every write goes through five steps: healthy check, read old value, check limits, write one word, read it back">
+
+Everything runs from a small server. Python scripts reach the TV through a shell on the TV, copy a small C# helper
+program onto it, and the helper talks to the panel controller over the controller's own **internal USB service link**
+(simple read and write commands). Every write is checked five ways and read back; anything unexpected puts the old value
+back. Services re-apply both fixes after every controller boot. Scripts: the [blackout watcher](tools/tcon-calibration/services/lane-mask-watcher/README.md)
+and the [line-fix kit](tools/tcon-calibration/).
+**[How the tools work, step by step →](docs/advanced/tv-calibration/HOW-THE-TOOLS-WORK.md)**
 
 ## How the two fixes fit together
 
@@ -96,7 +108,8 @@ More photos: [gallery in the write-up](docs/advanced/tv-calibration/WRITEUP.md#1
 The [guide](tools/tcon-calibration/GUIDE.md) walks through measuring the line with a camera, checking that your
 damage reads the same way, the first calibration run, tuning per column, the runtime trims, automation and recovery, with the
 [scripts](tools/tcon-calibration/). You need a **root shell on your own TV**, the TV's internal
-controller link, a camera on a tripod and a media player for test patterns. Writing to a panel controller can damage
+controller link, a camera on a tripod and a media player for test patterns. The blackout fix has its own script and setup notes:
+[lane-mask watcher](tools/tcon-calibration/services/lane-mask-watcher/README.md). Writing to a panel controller can damage
 a TV: read the [safety rules](SAFETY.md) first.
 
 **Other TVs?** The idea may carry over to other OLED and QD-OLED TVs whose damaged columns read wrong in their own
