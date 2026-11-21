@@ -243,13 +243,13 @@ works on any display, but only for that player's content.
 
 ## 13. Photos and tools
 
-Before (October) and after (bake 11, 20 November), phone photos, EXIF removed:
+Before and after bake 11, phone photos, EXIF removed:
 
 | Before | After |
 | :---: | :---: |
-| <img src="../../assets/line-before-content-1.jpg" width="300" alt="Dark line through real content above the impact mark"> | <img src="../../assets/bake11-after-impact-area.jpg" width="225" alt="Same area after bake 11, no line"> |
+| <img src="../../assets/line-before-content-1.jpg" width="300" alt="Dark line through real content above the impact mark"> | <img src="../../assets/bake11-after-dark-scene.jpg" width="225" alt="Dark scene after bake 11, no line"> |
 | <img src="../../assets/line-before-white.jpg" width="300" alt="The line as a thin stripe on a white field"> | <img src="../../assets/bake11-after-flat-field.jpg" width="225" alt="Flat pale field after bake 11, faint trace only"> |
-| <img src="../../assets/line-before-content-2.jpg" width="225" alt="Thin dark line through real content"> | <img src="../../assets/bake11-after-dark-scene.jpg" width="225" alt="Dark scene after bake 11, no line"> |
+| <img src="../../assets/line-before-content-2.jpg" width="225" alt="Thin dark line through real content"> | <img src="../../assets/bake11-after-impact-area.jpg" width="225" alt="Area right above the impact mark after bake 11, no line"> |
 | | <img src="../../assets/bake11-after-bright-scene.jpg" width="225" alt="Bright snow scene after bake 11, no line"> |
 | | <img src="../../assets/bake11-after-detail-scene.jpg" width="225" alt="Detailed scene after bake 11, no line"> |
 

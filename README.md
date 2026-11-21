@@ -9,9 +9,9 @@
 
 ## Results
 
-| Before (October) | After (bake 11, 20 November) |
+| Before | After bake 11 |
 | :---: | :---: |
-| <img src="docs/assets/line-before-content-1.jpg" width="330" alt="Dark vertical line through real content above the impact mark"> | <img src="docs/assets/bake11-after-impact-area.jpg" width="250" alt="Same area after bake 11: no line"> |
+| <img src="docs/assets/line-before-content-1.jpg" width="330" alt="Dark vertical line through real content above the impact mark"> | <img src="docs/assets/bake11-after-dark-scene.jpg" width="250" alt="Dark scene after bake 11: no line"> |
 
 <img src="docs/assets/bake11-before-after-chart.png" width="720" alt="Band brightness vs healthy neighbours by grey level, before and after bake 11">
 
