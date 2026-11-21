@@ -35,11 +35,11 @@ Even when it applies, expect a colour floor. On our panel blue stays short in da
 
 ## 1. Prerequisites
 
-You need all of these before step 2. This kit provides none of the access.
+You need all of these before step 2.
 
 1. **A working root shell on your TV** that a script on another computer can run non-interactively. It must return
-   the command's stdout and its exit status, as `ssh root@TV 'cmd'` does. This kit does not provide, describe or link
-   any way to obtain root on a TV. If you do not already have one, stop here.
+   the command's stdout and its exit status, as `ssh root@TV 'cmd'` does. Use the [root verification guide](https://github.com/TheMHD1/samsung-s95f-root-access/blob/main/docs/VERIFY-ROOT.md)
+   to check your existing TV session. Stop here if you cannot verify root access.
 2. **.NET on the TV.** The helpers are small C# programs run with `/usr/bin/dotnet`. They target net6.0. Check with
    `dotnet --list-runtimes` in your root shell.
 3. **The panel controller (TCON) USB link**, visible to the TV's kernel. *S95F example:* USB device `04e8:2001` at

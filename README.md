@@ -15,8 +15,9 @@ measures every column in standby and adds drive to weak ones, but the damaged co
 they got nothing. Just before the TV's own scan, we lower the **measuring gain** for those columns in controller RAM. The
 scan then sees them as weak, and the TV compensates them and saves that itself. After eleven calibration runs (one TV scan each), the
 band is within **1–2 % of its neighbours from 30 % grey up**. Very dark greys are still slightly yellow. We never write
-the controller's flash ourselves, and the physical damage remains. Both fixes need a root shell on your own TV, which
-the guide does not cover.
+the controller's flash ourselves, and the physical damage remains.
+
+**Prerequisite for both TV-side fixes.** You need an existing root shell on your own TV. [Verify TV root access and read the research notes](https://github.com/TheMHD1/samsung-s95f-root-access).
 
 **Blackouts:** [short explanation ↓](#problem-1-the-blackouts-in-short) · [deep dive](docs/advanced/BLACKOUT-MITIGATION.md) ·
 **Line:** [short explanation ↓](#problem-2-the-dark-line-in-short) · [deep dive](docs/advanced/tv-calibration/WRITEUP.md) ·
@@ -94,7 +95,7 @@ More photos: [gallery in the write-up](docs/advanced/tv-calibration/WRITEUP.md#1
 
 The [guide](tools/tcon-calibration/GUIDE.md) walks through measuring the line with a camera, checking that your
 damage reads the same way, the first calibration run, tuning per column, the runtime trims, automation and recovery, with the
-[scripts](tools/tcon-calibration/). You need a **root shell on your own TV** (not covered by the guide), the TV's internal
+[scripts](tools/tcon-calibration/). You need a **root shell on your own TV**, the TV's internal
 controller link, a camera on a tripod and a media player for test patterns. Writing to a panel controller can damage
 a TV: read the [safety rules](SAFETY.md) first.
 
