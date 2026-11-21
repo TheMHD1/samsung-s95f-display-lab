@@ -1,6 +1,6 @@
 # Calibrating damaged QD-OLED columns through the TV's own compensation scan
 
-**Samsung S95F, 77-inch QD-OLED · November 2026 · status: final setting, acceptance scan pending**
+**Samsung S95F, 77-inch QD-OLED · status: final setting, acceptance scan pending**
 
 This is the story of how a physically damaged band of columns on one S95F panel was brought back to within a few
 percent of its neighbours, **inside the TV**, for every source and app, without writing the panel's calibration storage
@@ -28,9 +28,9 @@ repository.
 
 ## 1. The damage
 
-The panel has impact damage at its bottom edge with a vertical line of damaged columns above it. In October the
+The panel has impact damage at its bottom edge with a vertical line of damaged columns above it. At first the
 damaged columns lacked about 14–23 8-bit codes of drive and a player-side correction (a per-column video layer) could
-hide them. By mid-November the shortfall was **65–75 codes for red and green, more for blue**, and the four worst
+hide them. A few weeks later the shortfall was **65–75 codes for red and green, more for blue**, and the four worst
 columns were practically black up to 30 % grey (RESULTS §2). The damage was growing; a video-layer correction of that
 size is no longer practical, and it never covered the TV's own apps or other inputs.
 

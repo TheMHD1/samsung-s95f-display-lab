@@ -3,7 +3,7 @@
 Companion to [WRITEUP.md](WRITEUP.md). Panel: 77-inch Samsung S95F QD-OLED, damaged columns **1255–1260** (worst
 1256–1259). All measurements: SDR, the TV's Movie picture mode, narrow grey or colour bars on black played from a media
 player, photographed with a RAW camera. **1.00 = the same as the healthy columns next to the band in the same photo.**
-Dates are November 2026.
+
 
 Two ways of reading a photo are used, and they are labelled everywhere:
 
@@ -13,7 +13,7 @@ Two ways of reading a photo are used, and they are labelled everywhere:
   (camera G ≈ .80 G + .20 B, camera R ≈ .93 R + .07 B, camera B ≈ .03 R + .21 G + .76 B). Luminance is then
   L = .25 R + .68 G + .07 B. This is the more honest number for colour.
 
-## 1. Final state (bake 11 + runtime trims), 20 Nov
+## 1. Final state (bake 11 + runtime trims)
 
 | Grey (8-bit code) | 100 % (255) | 50 % (128) | 30 % (77) | 20 % (51) | 10 % (26) | 5 % (13) |
 |---|---|---|---|---|---|---|
@@ -29,7 +29,7 @@ Plain reading: brightness matches within 1–2 % from 30 % grey up and within ab
 match within about 3 % from 30 % grey up (unmixed green +5 % at 20 % grey). Blue is short below about 30 % grey, so dark greys on the band look slightly
 yellow. Charts: [band luminance](../../assets/bake11-band-luminance.png), [blue balance](../../assets/bake11-blue-ratio.png).
 
-## 2. Starting point: no correction at all, 19 Nov
+## 2. Starting point: no correction at all
 
 All earlier corrections switched off. Four worst columns, camera, range over columns and colours:
 
@@ -38,7 +38,7 @@ All earlier corrections switched off. Four worst columns, camera, range over col
 | Light vs healthy | ~0.01 | 0.01–0.07 | 0.03–0.18 | 0.11–0.30 | 0.11–0.39 | 0.27–0.55 | 0.43–0.67 |
 
 At 4 % grey the band was black (the 1–3 % measured is camera flare). Single-colour bars gave the same result per colour.
-Expressed as drive, red and green lacked about 65–75 8-bit codes and blue somewhat more. In late October the same
+Expressed as drive, red and green lacked about 65–75 8-bit codes and blue somewhat more. A few weeks earlier the same
 columns lacked 14–23 codes: **the damage grew about three-fold in a few weeks.**
 
 ## 3. Scan-time sensing gain: the bake series

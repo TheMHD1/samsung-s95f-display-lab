@@ -20,7 +20,7 @@ A damaged OLED panel needs care. These rules come from real incidents during thi
   `research/tv-overlay` source are for deliberate owner-device research and are not invoked by that installer.
 - Past TV-side work did change volatile display/compositor/MGA state and a bounded controller lane mask. The mask
   suppresses part of a sensing-consistency check; it is not a physical repair or proof of unchanged protection coverage.
-- We never wrote the compensation buffers, calibration storage or firmware/config flash ourselves. Since November 2026
+- We never wrote the compensation buffers, calibration storage or firmware/config flash ourselves. Now
   the stored compensation **does change through the TV's own scan and save**: the [scan-time calibration](docs/advanced/tv-calibration/WRITEUP.md)
   sets a sensing gain in controller RAM before the stock scan, and the stock firmware stores the result. Any later scan
   without that gain stores the stock result again. Firmware analysis found a real stock save path from comp2/comp6 RAM

@@ -2,7 +2,7 @@
 
 **A damaged 77-inch QD-OLED, fixed from inside the TV · blackout mitigation · line calibration · SDR/HDR research**
 
-> **November 2026: the dark line is fixed inside the TV, for every input and app.** We let the TV's own
+> **The dark line is fixed inside the TV, for every input and app.** We let the TV's own
 > panel scan measure the damaged columns correctly, so its own compensation drives them again. No flash write.
 > **[Read the story →](docs/advanced/tv-calibration/WRITEUP.md)** · [Results](docs/advanced/tv-calibration/RESULTS.md) ·
 > [Do it yourself](tools/tcon-calibration/GUIDE.md) · [Blackout fix](docs/advanced/BLACKOUT-MITIGATION.md)
